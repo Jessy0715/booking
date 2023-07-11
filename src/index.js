@@ -15,14 +15,21 @@ const bookingTheme = createTheme({
       main: '#938C8C',
       dark: '#757070'
     },
+    secondary: {
+      main: '#D9D9D9'
+    }
   },
   typography: {
     subtitle1: {
-      fontSize: 14,
+      fontSize: '1.2rem',
+      
+    },
+    subtitle2: {
+      fontSize: '1rem',
     },
   }
 });
-
+// 如果你想在多个组件中共享样式，可以将 mak
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>

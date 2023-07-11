@@ -10,11 +10,12 @@ const Header = () => {
           color: "#fff",
           paddingX: "24px",
           paddingY: "45PX",
+          marginBottom: "20px"
         }}
       >
         <Grid container direction="column">
           <Grid item sm={8}>
-            <h3>教室場地借用管理系統</h3>
+            <h2>教室場地借用管理系統</h2>
           </Grid>
           <Grid item sm={8} sx={{ textAlign: "right" }}>
             <div>登出</div>
