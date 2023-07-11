@@ -1,9 +1,37 @@
-import { Paper, Grid, Container, Typography, Box, Button } from "@mui/material";
+import {
+  Paper,
+  Grid,
+  Typography,
+  Box,
+  Button,
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  styled,
+  tableCellClasses,
+} from "@mui/material";
 import roomImg1 from "@/assets/image/room1.jpg";
 import roomImg2 from "@/assets/image/room2.jpg";
 import { useStyles } from "../../../bookingStyle";
-
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+
+// Table 相關組件: TableContainer, Table, TableHead, TableBody, TableRow, TableCell, tableCellClasses
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
+  },
+}));
+
+function createData(name, calories, fat, carbs) {
+  return { name, calories, fat, carbs };
+}
+const rows = [createData("場地清潔費", 2000, 1500, 2500)];
+
 const RoomTable = () => {
   const classes = useStyles();
   const data = [
@@ -12,22 +40,26 @@ const RoomTable = () => {
       image: roomImg1,
       title: "普101館",
       desc: "1樓，階梯教室，空間可容納 302 人。",
-      price: {
-        morning: "2000",
-        afternoon: "2500",
-        night: "3500",
-      },
+      price: [
+        {
+          morning: "2000",
+          afternoon: "2500",
+          night: "3500",
+        },
+      ],
     },
     {
       id: 2,
       image: roomImg2,
       title: "普102館",
       desc: "2樓，階梯教室，空間可容納 400 人。",
-      price: {
-        morning: "2000",
-        afternoon: "2500",
-        night: "4000",
-      },
+      price: [
+        {
+          morning: "2000",
+          afternoon: "2500",
+          night: "4000",
+        },
+      ],
     },
   ];
   return (
@@ -42,22 +74,73 @@ const RoomTable = () => {
                 elevation={0}
                 component="section"
                 square
-                sx={{ marginBottom: "20px", minWidth: "80vw", marginX: "auto" }}
+                sx={{ marginBottom: "50px", minWidth: "85vw", marginX: "auto" }}
               >
-                <Grid container direction="row" alignItems="center" wrap="nowrap">
-                  <img src={image} width="220" />
-                  <Grid container direction="row" justifyContent="start" alignItems="start">
-                    <Box>
-                      <Grid container alignItems="center">
-                        <ArrowRightIcon fontSize="large" color="secondary" />
-                        <Typography variant="subtitle2">{title}</Typography>
-                      </Grid>
-                      <Box sx={{ fontSize: "14px" }} className={classes.pd}>
-                        {desc}
+                <Grid
+                  container
+                  direction="row"
+                  alignItems="center"
+                  wrap="nowrap"
+                >
+                  <Box sx={{ paddingX: "20px" }}>
+                    <img src={image} width="220" />
+                  </Box>
+                  <Grid>
+                    <Grid
+                      container
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="start"
+                    >
+                      <Box>
+                        <Grid container alignItems="center">
+                          <ArrowRightIcon fontSize="large" color="secondary" />
+                          <Typography variant="subtitle2">{title}</Typography>
+                        </Grid>
+                        <Box sx={{ fontSize: "14px" }} className={classes.pd}>
+                          {desc}
+                        </Box>
                       </Box>
-                    </Box>
+                      <Box>
+                        <Button variant="outlined">前往預約</Button>
+                      </Box>
+                    </Grid>
                     <Box>
-                      <Button variant="outlined">前往預約</Button>
+                      <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                          <TableHead>
+                            <TableRow>
+                              <StyledTableCell>時段</StyledTableCell>
+                              <StyledTableCell>
+                                上午 09:00 - 12:00
+                              </StyledTableCell>
+                              <StyledTableCell>
+                                下午 13:00 -15:00
+                              </StyledTableCell>
+                              <StyledTableCell>
+                                晚上 18:00 - 22:00
+                              </StyledTableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {rows.map((row) => (
+                              <TableRow
+                                key={row.name}
+                                sx={{
+                                  "&:last-child td, &:last-child th": {
+                                    border: 0,
+                                  },
+                                }}
+                              >
+                                <TableCell>{row.name}</TableCell>
+                                <TableCell>{row.calories}</TableCell>
+                                <TableCell>{row.fat}</TableCell>
+                                <TableCell>{row.carbs}</TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
                     </Box>
                   </Grid>
                 </Grid>
