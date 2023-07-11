@@ -7,8 +7,8 @@ const RoomInfo = () => {
   return (
     <>
       <Header />
-      <Paper component="section" elevation={0}>
-        <Container maxWidth="lg" sx={{ paddingY: "20px", marginBottom: "20px" }}>
+      <Paper component="section" elevation={0} sx={{ backgroundColor: '#e5e5e5', paddingY: "20px" }}>
+        <Container maxWidth="lg" sx={{ paddingY: "20px" }}>
           <Grid container direction="row" alignItems="center">
             <ArrowRightIcon fontSize="large" color="primary" />
             <Typography variant="subtitle1">空間查詢</Typography>

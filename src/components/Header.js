@@ -10,7 +10,6 @@ const Header = () => {
           color: "#fff",
           paddingX: "24px",
           paddingY: "45PX",
-          marginBottom: "20px"
         }}
       >
         <Grid container direction="column">

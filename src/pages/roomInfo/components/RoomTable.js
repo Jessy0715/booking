@@ -20,7 +20,7 @@ import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 
 // Table 相關組件: TableContainer, Table, TableHead, TableBody, TableRow, TableCell, tableCellClasses
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+const StyledHeaderTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.common.white,
@@ -37,7 +37,7 @@ const RoomTable = () => {
   const data = [
     {
       id: 1,
-      image: roomImg1,
+      backgroundImage: `url(${roomImg1})`,
       title: "普101館",
       desc: "1樓，階梯教室，空間可容納 302 人。",
       price: [
@@ -50,7 +50,7 @@ const RoomTable = () => {
     },
     {
       id: 2,
-      image: roomImg2,
+      backgroundImage: `url(${roomImg2})`,
       title: "普102館",
       desc: "2樓，階梯教室，空間可容納 400 人。",
       price: [
@@ -64,27 +64,35 @@ const RoomTable = () => {
   ];
   return (
     <>
-      <Paper component="main" elevation={0}>
+      <Paper component="main" elevation={0} sx={{ backgroundColor: '#E5E5E5' }} >
         <Grid container direction="column" justifyContent="flex-start">
           {data.map((el) => {
-            const { id, image, title, desc, price } = el;
+            const { id, backgroundImage, title, desc, price } = el;
             return (
               <Paper
                 key={id}
                 elevation={0}
                 component="section"
                 square
-                sx={{ marginBottom: "50px", minWidth: "85vw", marginX: "auto" }}
+                sx={{ marginBottom: "50px", minWidth: "80vw", marginX: "auto", backgroundColor: "#fff", padding: "20px" }}
               >
                 <Grid
                   container
                   direction="row"
-                  alignItems="center"
+                  alignItems="stretch"
                   wrap="nowrap"
                 >
-                  <Box sx={{ paddingX: "20px" }}>
-                    <img src={image} width="220" />
-                  </Box>
+                  <Box
+                    sx={{
+                      backgroundImage: backgroundImage,
+                      backgroundRepeat: "no-repeat",
+                      backgroundPosition: "center",
+                      backgroundSize: "cover",
+                      marginRight: "30px",
+                      width: "300px",
+                      height: "185px",
+                    }}
+                  />
                   <Grid>
                     <Grid
                       container
@@ -106,20 +114,20 @@ const RoomTable = () => {
                       </Box>
                     </Grid>
                     <Box>
-                      <TableContainer component={Paper}>
+                      <TableContainer component={Paper} elevation={0} sx={{ border: "1px solid #E5E5E5" }}>
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                          <TableHead>
+                          <TableHead >
                             <TableRow>
-                              <StyledTableCell>時段</StyledTableCell>
-                              <StyledTableCell>
+                              <StyledHeaderTableCell>時段</StyledHeaderTableCell>
+                              <StyledHeaderTableCell>
                                 上午 09:00 - 12:00
-                              </StyledTableCell>
-                              <StyledTableCell>
+                              </StyledHeaderTableCell>
+                              <StyledHeaderTableCell>
                                 下午 13:00 -15:00
-                              </StyledTableCell>
-                              <StyledTableCell>
+                              </StyledHeaderTableCell>
+                              <StyledHeaderTableCell>
                                 晚上 18:00 - 22:00
-                              </StyledTableCell>
+                              </StyledHeaderTableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
@@ -127,8 +135,9 @@ const RoomTable = () => {
                               <TableRow
                                 key={row.name}
                                 sx={{
-                                  "&:last-child td, &:last-child th": {
-                                    border: 0,
+                                  "&:last-child td": {
+                                    borderRight: 1,
+                                    borderRightColor: "#E5E5E5"
                                   },
                                 }}
                               >
