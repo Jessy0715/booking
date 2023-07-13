@@ -1,9 +1,7 @@
 import { useState } from "react";
 import {
-  Avatar,
   Paper,
   Grid,
-  TextField,
   Box,
   Button,
   FormControl,
@@ -11,12 +9,10 @@ import {
   OutlinedInput,
   InputAdornment,
   IconButton,
-  Link
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import avatar1 from "@/assets/avatar/member1.jpg";
-
-const Login = () => {
+import mainRoom from "@/assets/image/mainRoom.jpg";
+const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -42,35 +38,19 @@ const Login = () => {
             maxWidth: "20vw",
             marginX: "auto",
             position: "relative",
-            pt: 2,
-            pb: 2,
+            pb: 3,
           }}
         >
-          <Box
-            component="span"
-            sx={{
-              position: "absolute",
-              left: 10,
-              top: 5,
-              color: "#938C8C",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-          >
-            <Link href="/register" underline="none">
-              <small>管理員進入</small>
-            </Link>
-          </Box>
           <Grid container direction="column" justifyContent="center">
-            <Grid container direction="row" justifyContent="center">
-              <Avatar
-                alt="member"
-                src={avatar1}
+            <Grid container direction="row" justifyContent="center" sx={{ mb: 2 }}>
+              <Box
                 sx={{
-                  width: { sm: 70, md: 128 },
-                  height: "auto",
-                  mt: 4,
-                  mb: 4,
+                  backgroundImage: `url(${mainRoom})`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "center",
+                  backgroundSize: "cover",
+                  width: "300%",
+                  height: "185px",
                 }}
               />
             </Grid>
@@ -117,13 +97,8 @@ const Login = () => {
             <Grid container direction="row" justifyContent="center">
               <Box sx={{ m: 1, width: "70%" }}>
                 <Button fullWidth variant="contained">
-                  登入
+                  註冊
                 </Button>
-              </Box>
-            </Grid>
-            <Grid container direction="row" justifyContent="center">
-              <Box sx={{ m: 1, width: "70%" }} component="span">
-                <small>立即註冊</small>
               </Box>
             </Grid>
           </Grid>
@@ -133,4 +108,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
