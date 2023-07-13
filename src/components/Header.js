@@ -8,8 +8,10 @@ const Header = () => {
         sx={{
           backgroundColor: "#938C8C",
           color: "#fff",
-          paddingX: "24px",
-          paddingY: "45PX",
+          pl: 4,
+          pr: 4,
+          pt: 7,
+          pb: 7,
         }}
       >
         <Grid container direction="column">
