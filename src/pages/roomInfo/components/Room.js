@@ -13,6 +13,7 @@ import roomImg2 from "@/assets/image/room2.jpg";
 import { useStyles } from "../../../bookingStyle";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import RoomTable from "./RoomTable";
+import MultiSwiper from "./MultiSwiper";
 
 // Table 相關組件: TableContainer, Table, TableHead, TableBody, TableRow, TableCell, tableCellClasses
 
@@ -40,28 +41,30 @@ const Room = () => {
   const data = [
     {
       id: 1,
-      backgroundImage: `url(${roomImg1})`,
+      roomImg: [roomImg1, roomImg2],
+      // backgroundImage: `url(${roomImg1})`,
       title: "普101館",
       desc: "1樓，階梯教室，空間可容納 302 人。",
       price: [
         {
           name: "場地清潔費",
-          morning: "2000",
-          afternoon: "2500",
-          night: "3500",
+          morning: "1000",
+          afternoon: "2000",
+          night: "3000",
         },
       ],
     },
     {
       id: 2,
-      backgroundImage: `url(${roomImg2})`,
+      roomImg: [roomImg1, roomImg2],
+      // backgroundImage: `url(${roomImg2})`,
       title: "普102館",
       desc: "2樓，階梯教室，空間可容納 400 人。",
       price: [
         {
           name: "場地清潔費",
           morning: "2000",
-          afternoon: "2500",
+          afternoon: "3500",
           night: "4000",
         },
       ],
@@ -72,7 +75,7 @@ const Room = () => {
       <Paper component="main" elevation={0} sx={{ backgroundColor: "#E5E5E5" }}>
         <Grid container direction="column" justifyContent="flex-start">
           {data.map((el) => {
-            const { id, backgroundImage, title, desc, price } = el;
+            const { id, roomImg, title, desc, price } = el;
             return (
               <Paper
                 key={id}
@@ -84,7 +87,7 @@ const Room = () => {
                   minWidth: "80vw",
                   marginX: "auto",
                   backgroundColor: "#fff",
-                  p: 3
+                  p: 3,
                 }}
               >
                 <Grid
@@ -93,7 +96,7 @@ const Room = () => {
                   alignItems="stretch"
                   wrap="nowrap"
                 >
-                  <Box
+                  {/* <Box
                     sx={{
                       backgroundImage: backgroundImage,
                       backgroundRepeat: "no-repeat",
@@ -103,7 +106,8 @@ const Room = () => {
                       width: "300px",
                       height: "185px",
                     }}
-                  />
+                  /> */}
+                  <MultiSwiper roomImg={roomImg}></MultiSwiper>
                   <Grid>
                     <Grid
                       container

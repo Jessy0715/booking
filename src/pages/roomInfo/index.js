@@ -7,7 +7,11 @@ const RoomInfo = () => {
   return (
     <>
       <Header />
-      <Paper component="section" elevation={0} sx={{ backgroundColor: '#e5e5e5', pt: 3, pb: 3 }}>
+      <Paper
+        component="section"
+        elevation={0}
+        sx={{ backgroundColor: "#e5e5e5", pt: 3, pb: 3 }}
+      >
         <Container maxWidth="lg" sx={{ pt: 3, pb: 3 }}>
           <Grid container direction="row" alignItems="center">
             <ArrowRightIcon fontSize="large" color="primary" />
