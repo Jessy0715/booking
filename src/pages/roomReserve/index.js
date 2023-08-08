@@ -44,18 +44,21 @@ const RoomReserve = () => {
           sx={{ mb: 4 }}
         >
           <TextField
+            required
             id="rent-type"
             label="租借館別"
             variant="outlined"
             sx={{ mr: 3 }}
           />
           <TextField
+            required
             id="rent-date"
             label="租借日期"
             variant="outlined"
             sx={{ mr: 3 }}
           />
           <TextField
+            required
             id="rent-reason"
             label="租借事由"
             variant="outlined"
@@ -106,7 +109,7 @@ const RoomReserve = () => {
             </Box>
           </Box>
         </Box>
-        <Box sx={{ display: "flex", justifyContent: 'flex-end', mb: 5 }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 5 }}>
           <Button variant="contained">立即預約</Button>
         </Box>
         <Grid container direction="row" alignItems="center" sx={{ mb: 2 }}>
@@ -282,7 +285,16 @@ const RoomReserve = () => {
                   align="center"
                   sx={{ borderRight: "1px solid #e5e5e5", px: 0, py: 0 }}
                 >
-                  <Checkbox size="large" sx={{ width: "100%", px: 0, py: 0 }} />
+                  <Checkbox
+                    size="large"
+                    sx={{
+                      px: 0,
+                      py: 0,
+                      "& .MuiSvgIcon-root": {
+                        fontSize: "30px", // 使內部的 SVG 圖標大小繼承父元素的大小
+                      },
+                    }}
+                  />
                 </TableCell>
                 <TableCell
                   align="center"
