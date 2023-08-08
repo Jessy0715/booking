@@ -42,7 +42,12 @@ const Register = () => {
           }}
         >
           <Grid container direction="column" justifyContent="center">
-            <Grid container direction="row" justifyContent="center" sx={{ mb: 2 }}>
+            <Grid
+              container
+              direction="row"
+              justifyContent="center"
+              sx={{ mb: 2 }}
+            >
               <Box
                 sx={{
                   backgroundImage: `url(${mainRoom})`,
@@ -60,7 +65,14 @@ const Register = () => {
                 variant="outlined"
                 size="small"
               >
-                <InputLabel htmlFor="account">帳號</InputLabel>
+                <InputLabel
+                  htmlFor="account"
+                  sx={{
+                    backgroundColor: "white",
+                  }}
+                >
+                  帳號
+                </InputLabel>
                 <OutlinedInput
                   id="account"
                   placeholder="請輸入帳號"

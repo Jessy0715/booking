@@ -20,12 +20,16 @@ const routes = [
   {
     path: "/roomInfo",
     element: <RoomInfo />,
-    children: [
-      {
-        path: "roomReserve",
-        element: <RoomReserve />,
-      },
-    ],
+    // children: [
+    //   {
+    //     path: "roomReserve",
+    //     element: <RoomReserve />,
+    //   },
+    // ],
+  },
+  {
+    path: "/roomReserve",
+    element: <RoomReserve />,
   },
   // {
   //   path: "*",

@@ -11,7 +11,7 @@ import {
   OutlinedInput,
   InputAdornment,
   IconButton,
-  Link
+  Link,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import avatar1 from "@/assets/avatar/member1.jpg";
@@ -80,7 +80,14 @@ const Login = () => {
                 variant="outlined"
                 size="small"
               >
-                <InputLabel htmlFor="account">帳號</InputLabel>
+                <InputLabel
+                  htmlFor="account"
+                  sx={{
+                    backgroundColor: "white",
+                  }}
+                >
+                  帳號
+                </InputLabel>
                 <OutlinedInput
                   id="account"
                   placeholder="請輸入帳號"
@@ -93,7 +100,11 @@ const Login = () => {
                 variant="outlined"
                 size="small"
               >
-                <InputLabel htmlFor="password">密碼</InputLabel>
+                <InputLabel
+                  htmlFor="password"
+                >
+                  密碼
+                </InputLabel>
                 <OutlinedInput
                   id="password"
                   placeholder="請輸入密碼"
