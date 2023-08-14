@@ -1,4 +1,4 @@
-import { useState, useEffect, memo } from "react";
+import { useState, useEffect, memo, Fragment } from "react";
 import Header from "@/components/Header";
 import {
   Paper,
@@ -19,11 +19,24 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import SquareIcon from "@mui/icons-material/Square";
 import CropDinIcon from "@mui/icons-material/CropDin";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 const RoomReserve = () => {
+  const select_locationData = [
+    {
+      location: "普 101",
+      morning: [true, false, false, false, false, false, false],
+      noon: [true, true, false, false, false, false, false],
+      night: [true, true, false, false, false, false, false],
+    },
+    // {
+    //   location: "普 102",
+    //   morning: [true, false, false, false, false, false, false],
+    //   noon: [true, true, false, false, false, false, false],
+    //   night: [true, true, false, false, true, true, true],
+    // },
+  ];
   const columnsDate = [
     {
       date: "03/01",
@@ -70,14 +83,14 @@ const RoomReserve = () => {
       weekday: "五",
     },
   ];
-  const [isChecked, setIsChecked] = useState(false);
-  const handleCheckboxChange = (event) => {
-    setIsChecked(event.target.checked);
-  };
+  // const [isChecked, setIsChecked] = useState(false);
+  // const handleCheckboxChange = (event) => {
+  //   setIsChecked(event.target.checked);
+  // };
 
-  useEffect(() => {
-    console.log("isChecked:", isChecked);
-  }, [isChecked]);
+  // useEffect(() => {
+  //   console.log("isChecked:", isChecked);
+  // }, [isChecked]);
 
   return (
     <>
@@ -154,7 +167,7 @@ const RoomReserve = () => {
                   <CropDinIcon fontSize="large" color="primary" />
                   <Typography variant="subtitle3">可預約</Typography>
                 </Box>
-                <Box sx={{ display: "flex", alignItems: "center"  }}>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
                   <CropDinIcon fontSize="large" color="other" />
                   <Typography variant="subtitle3">不可預約</Typography>
                 </Box>
@@ -297,7 +310,114 @@ const RoomReserve = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <TableRow>
+                  {select_locationData.map((data) => (
+                    <Fragment key={data.location}>
+                      <TableRow>
+                        <TableCell
+                          rowSpan={3}
+                          align="center"
+                          sx={{ borderRight: "1px solid #e5e5e5" }}
+                        >
+                          {data.location}
+                        </TableCell>
+                        <TableCell
+                          align="center"
+                          sx={{
+                            borderRight: "1px solid #e5e5e5",
+                            background: "#938C8C",
+                            color: "#fff",
+                          }}
+                        >
+                          上午
+                        </TableCell>
+                        {data.morning.map((isChecked, index) => (
+                          <TableCell
+                            key={index}
+                            align="center"
+                            sx={{
+                              borderRight: "1px solid #e5e5e5",
+                              px: 0,
+                              py: 0,
+                            }}
+                          >
+                            <Checkbox
+                              checked={isChecked}
+                              sx={{
+                                "& .MuiSvgIcon-root": {
+                                  fontSize: "30px",
+                                },
+                              }}
+                            />
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                      <TableRow>
+                        <TableCell
+                          align="center"
+                          sx={{
+                            borderRight: "1px solid #e5e5e5",
+                            background: "#938C8C",
+                            color: "#fff",
+                          }}
+                        >
+                          下午
+                        </TableCell>
+                        {data.noon.map((isChecked, index) => (
+                          <TableCell
+                            key={index}
+                            align="center"
+                            sx={{
+                              borderRight: "1px solid #e5e5e5",
+                              px: 0,
+                              py: 0,
+                            }}
+                          >
+                            <Checkbox
+                              checked={isChecked}
+                              sx={{
+                                "& .MuiSvgIcon-root": {
+                                  fontSize: "30px",
+                                },
+                              }}
+                            />
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                      <TableRow>
+                        <TableCell
+                          align="center"
+                          sx={{
+                            borderRight: "1px solid #e5e5e5",
+                            background: "#938C8C",
+                            color: "#fff",
+                          }}
+                        >
+                          晚上
+                        </TableCell>
+                        {data.night.map((isChecked, index) => (
+                          <TableCell
+                            key={index}
+                            align="center"
+                            sx={{
+                              borderRight: "1px solid #e5e5e5",
+                              px: 0,
+                              py: 0,
+                            }}
+                          >
+                            <Checkbox
+                              checked={isChecked}
+                              sx={{
+                                "& .MuiSvgIcon-root": {
+                                  fontSize: "30px",
+                                },
+                              }}
+                            />
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    </Fragment>
+                  ))}
+                  {/* <TableRow>
                     <TableCell
                       align="center"
                       rowSpan={3}
@@ -320,12 +440,9 @@ const RoomReserve = () => {
                       sx={{ borderRight: "1px solid #e5e5e5", px: 0, py: 0 }}
                     >
                       <Checkbox 
-                        disabled
-                        checked={isChecked}
-                        onChange={handleCheckboxChange}
                         sx={{
                           "& .MuiSvgIcon-root": {
-                            fontSize: "30px", // 使內部的 SVG 圖標大小繼承父元素的大小
+                            fontSize: "30px",
                           },
                         }}
                       />
@@ -435,14 +552,174 @@ const RoomReserve = () => {
                       align="center"
                       sx={{ borderRight: "1px solid #e5e5e5" }}
                     ></TableCell>
-                  </TableRow>
+                  </TableRow> */}
                 </TableBody>
               </Table>
             </TableContainer>
           </Box>
 
           <Box>
-            <Typography variant="subtitle1">其他場地推薦</Typography>
+            <Typography variant="subtitle1" sx={{ mb: 1 }}>其他場地推薦</Typography>
+            {/* here */}
+            {select_locationData.map((data) => (
+              <Fragment key={data.location}>
+                <Box
+                  component="main"
+                  sx={{ backgroundColor: "#b8aeae", px: 4, py: 4, mb: 4 }}
+                >
+                  <TableContainer
+                    component={Paper}
+                    sx={{ boxShadow: "none" }}
+                  >
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell
+                            align="center"
+                            rowSpan={2}
+                            sx={{ borderRight: "1px solid #e5e5e5" }}
+                          >
+                            場地
+                          </TableCell>
+                          <TableCell
+                            align="center"
+                            rowSpan={2}
+                            sx={{ borderRight: "1px solid #e5e5e5" }}
+                          >
+                            時段
+                          </TableCell>
+                          {columnsDate.map((column) => (
+                            <TableCell
+                              key={column.date}
+                              align="center"
+                              sx={{ borderRight: "1px solid #e5e5e5" }}
+                            >
+                              {column.date}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                        <TableRow>
+                          {dayWeek.map((week) => (
+                            <TableCell
+                              key={week.weekday}
+                              align="center"
+                              sx={{ borderRight: "1px solid #e5e5e5" }}
+                            >
+                              {week.weekday}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell
+                            rowSpan={3}
+                            align="center"
+                            sx={{ borderRight: "1px solid #e5e5e5" }}
+                          >
+                            {data.location}
+                          </TableCell>
+                          <TableCell
+                            align="center"
+                            sx={{
+                              borderRight: "1px solid #e5e5e5",
+                              background: "#938C8C",
+                              color: "#fff",
+                            }}
+                          >
+                            上午
+                          </TableCell>
+                          {data.morning.map((isChecked, index) => (
+                            <TableCell
+                              key={index}
+                              align="center"
+                              sx={{
+                                borderRight: "1px solid #e5e5e5",
+                                px: 0,
+                                py: 0,
+                              }}
+                            >
+                              <Checkbox
+                                checked={isChecked}
+                                sx={{
+                                  "& .MuiSvgIcon-root": {
+                                    fontSize: "30px",
+                                  },
+                                }}
+                              />
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                        <TableRow>
+                          <TableCell
+                            align="center"
+                            sx={{
+                              borderRight: "1px solid #e5e5e5",
+                              background: "#938C8C",
+                              color: "#fff",
+                            }}
+                          >
+                            下午
+                          </TableCell>
+                          {data.noon.map((isChecked, index) => (
+                            <TableCell
+                              key={index}
+                              align="center"
+                              sx={{
+                                borderRight: "1px solid #e5e5e5",
+                                px: 0,
+                                py: 0,
+                              }}
+                            >
+                              <Checkbox
+                                checked={isChecked}
+                                sx={{
+                                  "& .MuiSvgIcon-root": {
+                                    fontSize: "30px",
+                                  },
+                                }}
+                              />
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                        <TableRow>
+                          <TableCell
+                            align="center"
+                            sx={{
+                              borderRight: "1px solid #e5e5e5",
+                              background: "#938C8C",
+                              color: "#fff",
+                            }}
+                          >
+                            晚上
+                          </TableCell>
+                          {data.night.map((isChecked, index) => (
+                            <TableCell
+                              key={index}
+                              align="center"
+                              sx={{
+                                borderRight: "1px solid #e5e5e5",
+                                px: 0,
+                                py: 0,
+                              }}
+                            >
+                              <Checkbox
+                                checked={isChecked}
+                                sx={{
+                                  "& .MuiSvgIcon-root": {
+                                    fontSize: "30px",
+                                  },
+                                }}
+                              />
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Box>
+              </Fragment>
+            ))}
           </Box>
         </Box>
       </Paper>
