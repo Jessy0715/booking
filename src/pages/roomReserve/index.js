@@ -149,14 +149,14 @@ const RoomReserve = () => {
               </Typography>
             </Box>
             <Box>
-              <Box sx={{ display: "flex" }}>
-                <Box sx={{ display: "flex" }}>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box sx={{ display: "flex", mr: 2 }}>
                   <CropDinIcon fontSize="large" color="primary" />
-                  <Typography variant="subtitle1">可預約</Typography>
+                  <Typography variant="subtitle3">可預約</Typography>
                 </Box>
-                <Box sx={{ display: "flex" }}>
-                  <SquareIcon fontSize="large" color="secondary" />
-                  <Typography variant="subtitle1">不可預約</Typography>
+                <Box sx={{ display: "flex", alignItems: "center"  }}>
+                  <CropDinIcon fontSize="large" color="other" />
+                  <Typography variant="subtitle3">不可預約</Typography>
                 </Box>
               </Box>
             </Box>
@@ -184,6 +184,7 @@ const RoomReserve = () => {
                   border: "none",
                   background: "transparent",
                 },
+                mr: 1,
               }}
               variant="outlined"
               startIcon={<ArrowBackIosNewIcon />}
@@ -201,6 +202,7 @@ const RoomReserve = () => {
                   border: "none",
                   background: "transparent",
                 },
+                ml: 1,
               }}
               variant="outlined"
               endIcon={<ArrowForwardIosIcon />}
@@ -210,9 +212,9 @@ const RoomReserve = () => {
           </Grid>
           <Box
             component="main"
-            sx={{ backgroundColor: "#b8aeae", px: 5, py: 5 }}
+            sx={{ backgroundColor: "#b8aeae", px: 5, py: 5, mb: 5 }}
           >
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
               <Table>
                 <TableHead>
                   <TableRow>
@@ -317,7 +319,8 @@ const RoomReserve = () => {
                       align="center"
                       sx={{ borderRight: "1px solid #e5e5e5", px: 0, py: 0 }}
                     >
-                      <Checkbox
+                      <Checkbox 
+                        disabled
                         checked={isChecked}
                         onChange={handleCheckboxChange}
                         sx={{
@@ -329,10 +332,7 @@ const RoomReserve = () => {
                     </TableCell>
                     <TableCell
                       align="center"
-                      sx={{
-                        borderRight: "1px solid #e5e5e5",
-                        backgroundColor: "#000",
-                      }}
+                      sx={{ borderRight: "1px solid #e5e5e5" }}
                     ></TableCell>
                     <TableCell
                       align="center"
@@ -414,7 +414,6 @@ const RoomReserve = () => {
                       align="center"
                       sx={{ borderRight: "1px solid #e5e5e5" }}
                     >
-                      gg
                     </TableCell>
                     <TableCell
                       align="center"
@@ -440,6 +439,10 @@ const RoomReserve = () => {
                 </TableBody>
               </Table>
             </TableContainer>
+          </Box>
+
+          <Box>
+            <Typography variant="subtitle1">其他場地推薦</Typography>
           </Box>
         </Box>
       </Paper>

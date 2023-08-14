@@ -17,15 +17,23 @@ const bookingTheme = createTheme({
     },
     secondary: {
       main: '#D9D9D9'
+    },
+    other: {
+      main: 'rgba(0,0,0,0.2)'
     }
   },
   typography: {
     subtitle1: {
       fontSize: '1.2rem',
+      fontWeight: 'bold',
+      color: '#938C8C'
       
     },
     subtitle2: {
       fontSize: '1rem',
+    },
+    subtitle3: {
+      fontSize: '1.2rem',
     },
   }
 });
