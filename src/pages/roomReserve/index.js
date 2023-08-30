@@ -559,7 +559,9 @@ const RoomReserve = () => {
           </Box>
 
           <Box>
-            <Typography variant="subtitle1" sx={{ mb: 1 }}>其他場地推薦</Typography>
+            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+              其他場地推薦
+            </Typography>
             {/* here */}
             {select_locationData.map((data) => (
               <Fragment key={data.location}>
@@ -567,10 +569,7 @@ const RoomReserve = () => {
                   component="main"
                   sx={{ backgroundColor: "#b8aeae", px: 4, py: 4, mb: 4 }}
                 >
-                  <TableContainer
-                    component={Paper}
-                    sx={{ boxShadow: "none" }}
-                  >
+                  <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
                     <Table>
                       <TableHead>
                         <TableRow>

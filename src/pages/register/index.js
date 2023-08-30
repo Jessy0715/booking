@@ -9,16 +9,62 @@ import {
   OutlinedInput,
   InputAdornment,
   IconButton,
+  FormHelperText,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import mainRoom from "@/assets/image/mainRoom.jpg";
 const Register = () => {
-  const [showPassword, setShowPassword] = useState(false);
+  const [account, setAccount] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(true);
+  const [error, setError] = useState(false);
+  // const [emptyError, setEmptyError] = useState(false);
+  const [accountEmptyError, setAccountEmptyError] = useState(false);
+  const [passwordEmptyError, setPasswordEmptyError] = useState(false);
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleAccountChange = (ev) => {
+    const newAccount = ev.target.value;
+    setAccount(newAccount);
+    setAccountEmptyError(false); // 清除帳號必填錯誤提示
+  };
+  const handlePwdChange = (ev) => {
+    const newPassword = ev.target.value;
+    setPassword(newPassword);
+
+    // 密碼格式驗證 (長度要8碼，要大小寫英文及數字)
+    const isValidPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(
+      newPassword
+    );
+    setError(!isValidPassword);
+    setPasswordEmptyError(false); // 清除密碼必填錯誤提示
+  };
+  const handleClickShowPassword = () =>
+    setShowPassword((showPassword) => !showPassword);
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
+  };
+  const handleRegister = () => {
+    if (!account) {
+      setAccountEmptyError(true);
+    }
+    if (!password) {
+      setPasswordEmptyError(true);
+    }
+
+    // reset
+    // setAccount("");
+    // setPassword("");
+    // setEmptyError(false);
+
+    // 執行登入邏輯，可能涉及後端API調用等
+    if (error) {
+      // 密碼格式錯誤，顯示錯誤訊息
+      return;
+    }
+
+    // 執行登入邏輯，例如：
+    // api.login(account, password).then((response) => { ... });
   };
   return (
     <>
@@ -46,7 +92,7 @@ const Register = () => {
               container
               direction="row"
               justifyContent="center"
-              sx={{ mb: 2 }}
+              sx={{ mb: 4 }}
             >
               <Box
                 sx={{
@@ -61,9 +107,10 @@ const Register = () => {
             </Grid>
             <Grid container direction="row" justifyContent="center">
               <FormControl
-                sx={{ m: 1, width: "70%" }}
+                sx={{ m: 1, width: "70%", mb: 2 }}
                 variant="outlined"
                 size="small"
+                error={accountEmptyError}
               >
                 <InputLabel
                   htmlFor="account"
@@ -75,21 +122,27 @@ const Register = () => {
                 </InputLabel>
                 <OutlinedInput
                   id="account"
+                  value={account}
+                  onChange={handleAccountChange}
                   placeholder="請輸入帳號"
                 ></OutlinedInput>
+                {accountEmptyError && <FormHelperText>必填欄位</FormHelperText>}
               </FormControl>
             </Grid>
             <Grid container direction="row" justifyContent="center">
               <FormControl
-                sx={{ m: 1, width: "70%" }}
+                sx={{ m: 1, width: "70%", mb: 2 }}
                 variant="outlined"
                 size="small"
+                error={error || passwordEmptyError}
               >
                 <InputLabel htmlFor="password">密碼</InputLabel>
                 <OutlinedInput
                   id="password"
                   placeholder="請輸入密碼"
-                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={handlePwdChange}
+                  type={showPassword ? "password" : "text"}
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton
@@ -104,11 +157,16 @@ const Register = () => {
                   }
                   label="Password"
                 />
+                {(error || passwordEmptyError) && (
+                  <FormHelperText>
+                    {passwordEmptyError ? "必填欄位" : "您輸入的密碼格式有錯誤"}
+                  </FormHelperText>
+                )}
               </FormControl>
             </Grid>
             <Grid container direction="row" justifyContent="center">
               <Box sx={{ m: 1, width: "70%" }}>
-                <Button fullWidth variant="contained">
+                <Button fullWidth variant="contained" onClick={handleRegister}>
                   註冊
                 </Button>
               </Box>
