@@ -1,4 +1,5 @@
 import { useState, useEffect, memo, Fragment } from "react";
+import dayjs from "dayjs";
 import Header from "@/components/Header";
 import {
   Paper,
@@ -8,7 +9,10 @@ import {
   Typography,
   Button,
   Checkbox,
-  FormControlLabel,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
   Box,
   Table,
   TableBody,
@@ -26,61 +30,96 @@ const RoomReserve = () => {
   const select_locationData = [
     {
       location: "普 101",
-      morning: [true, false, false, false, false, false, false],
-      noon: [true, true, false, false, false, false, false],
-      night: [true, true, false, false, false, false, false],
-    },
-    // {
-    //   location: "普 102",
-    //   morning: [true, false, false, false, false, false, false],
-    //   noon: [true, true, false, false, false, false, false],
-    //   night: [true, true, false, false, true, true, true],
-    // },
-  ];
-  const columnsDate = [
-    {
-      date: "03/01",
-    },
-    {
-      date: "03/02",
-    },
-    {
-      date: "03/03",
-    },
-    {
-      date: "03/04",
-    },
-    {
-      date: "03/05",
-    },
-    {
-      date: "03/06",
-    },
-    {
-      date: "03/07",
-    },
-  ];
-  const dayWeek = [
-    {
-      weekday: "六",
-    },
-    {
-      weekday: "日",
-    },
-    {
-      weekday: "一",
-    },
-    {
-      weekday: "二",
-    },
-    {
-      weekday: "三",
-    },
-    {
-      weekday: "四",
-    },
-    {
-      weekday: "五",
+      morning: [
+        {
+          checked: false,
+          disabled: true,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+      ],
+      noon: [
+        {
+          checked: false,
+          disabled: true,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+      ],
+      night: [
+        {
+          checked: false,
+          disabled: true,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+        {
+          checked: false,
+          disabled: false,
+        },
+      ],
     },
   ];
   // const [isChecked, setIsChecked] = useState(false);
@@ -91,6 +130,82 @@ const RoomReserve = () => {
   // useEffect(() => {
   //   console.log("isChecked:", isChecked);
   // }, [isChecked]);
+  const [rentType, setRentType] = useState("");
+  const [rentDate, setRentDate] = useState("");
+  const [rentReason, setReason] = useState("");
+
+  const handleRentTypeChange = (event) => {
+    setRentType(event.target.value);
+  };
+  const handleRentDateChange = (event) => {
+    setRentDate(event.target.value);
+  };
+  const handleRentReasonChange = (event) => {
+    setReason(event.target.value);
+  };
+
+  const [columnsDate, setColumnsDate] = useState(() => {
+    const currentDate = dayjs();
+    const startOfWeek = currentDate.startOf("week");
+    const endOfWeek = currentDate.endOf("week");
+    const dates = [];
+    let currentDay = startOfWeek;
+    while (
+      currentDay.isBefore(endOfWeek, "day") ||
+      currentDay.isSame(endOfWeek, "day")
+    ) {
+      dates.push(currentDay);
+      currentDay = currentDay.add(1, "day");
+    }
+    return dates;
+  });
+  const dayNames = ["日", "一", "二", "三", "四", "五", "六"];
+
+  const columnsDay = columnsDate.map((column) => dayNames[column.day()]);
+
+  // 前一周
+  const handlePreviousWeek = () => {
+    const newStartDate = columnsDate[0].subtract(1, "week");
+    const newEndDate = newStartDate.add(6, "day");
+    const newDates = [];
+
+    let currentDay = newStartDate;
+    while (
+      currentDay.isBefore(newEndDate, "day") ||
+      currentDay.isSame(newEndDate, "day")
+    ) {
+      newDates.push(currentDay);
+      currentDay = currentDay.add(1, "day");
+    }
+
+    setColumnsDate(newDates);
+  };
+
+  // 後一周
+  const handleNextWeek = () => {
+    const newStartDate = columnsDate[0].add(1, "week");
+    const newEndDate = newStartDate.add(6, "day");
+    const newDates = [];
+
+    let currentDay = newStartDate;
+    while (
+      currentDay.isBefore(newEndDate, "day") ||
+      currentDay.isSame(newEndDate, "day")
+    ) {
+      newDates.push(currentDay);
+      currentDay = currentDay.add(1, "day");
+    }
+
+    setColumnsDate(newDates);
+  };
+
+  // 查詢館藏
+  const searchRoom = () => {
+    // api.searchRoom(rentType, rentDate, rentReason).then((response) => { ... });
+  };
+
+  // 立即預約
+  const reserveRoomASAP = () => {};
 
   return (
     <>
@@ -108,19 +223,35 @@ const RoomReserve = () => {
             alignItems="center"
             sx={{ mb: 4 }}
           >
-            <TextField
-              required
-              id="rent-type"
-              label="租借館別"
+            <FormControl
+              sx={{ m: 1, width: "30%", mt: 0, mb: 0, mr: 3, ml: 0 }}
               variant="outlined"
-              sx={{ backgroundColor: "#fff", mr: 3 }}
-            />
+              required
+            >
+              <InputLabel id="demo-simple-select-label">租借館別</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={rentType}
+                label="租借館別"
+                sx={{
+                  backgroundColor: "white",
+                }}
+                onChange={handleRentTypeChange}
+              >
+                <MenuItem value={101}>101館</MenuItem>
+                <MenuItem value={102}>102館</MenuItem>
+                <MenuItem value={103}>103館</MenuItem>
+              </Select>
+            </FormControl>
             <TextField
               required
               id="rent-date"
               label="租借日期"
               variant="outlined"
               sx={{ backgroundColor: "#fff", mr: 3 }}
+              value={rentDate}
+              onChange={handleRentDateChange}
             />
             <TextField
               required
@@ -128,11 +259,14 @@ const RoomReserve = () => {
               label="租借事由"
               variant="outlined"
               sx={{ backgroundColor: "#fff", mr: 3 }}
+              value={rentReason}
+              onChange={handleRentReasonChange}
             />
             <SearchIcon
               fontSize="large"
               color="secondary"
               sx={{ color: "#757070", cursor: "pointer" }}
+              onClick={searchRoom}
             />
           </Grid>
           <Divider
@@ -175,7 +309,9 @@ const RoomReserve = () => {
             </Box>
           </Box>
           <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 5 }}>
-            <Button variant="contained">立即預約</Button>
+            <Button variant="contained" onClick={reserveRoomASAP}>
+              立即預約
+            </Button>
           </Box>
           <Grid container direction="row" alignItems="center" sx={{ mb: 2 }}>
             <ArrowRightIcon fontSize="large" color="primary" />
@@ -201,11 +337,15 @@ const RoomReserve = () => {
               }}
               variant="outlined"
               startIcon={<ArrowBackIosNewIcon />}
+              onClick={handlePreviousWeek}
             >
               <small>前一周</small>
             </Button>
             <Box sx={{ color: "#938C8C" }}>
-              <span>2023年 03月 01日 - 2023年 03月 07日</span>
+              <span>
+                {columnsDate[0].format("YYYY年 MM月 DD日")} -{" "}
+                {columnsDate[6].format("YYYY年 MM月 DD日")}
+              </span>
             </Box>
             <Button
               sx={{
@@ -219,6 +359,7 @@ const RoomReserve = () => {
               }}
               variant="outlined"
               endIcon={<ArrowForwardIosIcon />}
+              onClick={handleNextWeek}
             >
               <small>後一周</small>
             </Button>
@@ -245,68 +386,26 @@ const RoomReserve = () => {
                     >
                       時段
                     </TableCell>
-                    {columnsDate.map((column) => (
+                    {columnsDate.map((column, index) => (
                       <TableCell
-                        key={column.date}
+                        key={column.format("YYYY-MM-DD")}
                         align="center"
                         sx={{ borderRight: "1px solid #e5e5e5" }}
                       >
-                        {column.date}
+                        {column.format("MM/DD")}
                       </TableCell>
                     ))}
                   </TableRow>
                   <TableRow>
-                    {dayWeek.map((week) => (
+                    {columnsDate.map((column, index) => (
                       <TableCell
-                        key={week.weekday}
+                        key={column.format("YYYY-MM-DD")}
                         align="center"
                         sx={{ borderRight: "1px solid #e5e5e5" }}
                       >
-                        {week.weekday}
+                        {columnsDay[index]}
                       </TableCell>
                     ))}
-                    {/* <TableCell
-                  align="center"
-                  sx={{ borderRight: "1px solid #e5e5e5" }}
-                >
-                  六
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ borderRight: "1px solid #e5e5e5" }}
-                >
-                  日
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ borderRight: "1px solid #e5e5e5" }}
-                >
-                  一
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ borderRight: "1px solid #e5e5e5" }}
-                >
-                  二
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ borderRight: "1px solid #e5e5e5" }}
-                >
-                  三
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ borderRight: "1px solid #e5e5e5" }}
-                >
-                  四
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ borderRight: "1px solid #e5e5e5" }}
-                >
-                  五
-                </TableCell> */}
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -330,7 +429,7 @@ const RoomReserve = () => {
                         >
                           上午
                         </TableCell>
-                        {data.morning.map((isChecked, index) => (
+                        {data.morning.map((el, index) => (
                           <TableCell
                             key={index}
                             align="center"
@@ -341,7 +440,8 @@ const RoomReserve = () => {
                             }}
                           >
                             <Checkbox
-                              checked={isChecked}
+                              checked={el.checked}
+                              disabled={el.disabled}
                               sx={{
                                 "& .MuiSvgIcon-root": {
                                   fontSize: "30px",
@@ -362,7 +462,7 @@ const RoomReserve = () => {
                         >
                           下午
                         </TableCell>
-                        {data.noon.map((isChecked, index) => (
+                        {data.noon.map((el, index) => (
                           <TableCell
                             key={index}
                             align="center"
@@ -373,7 +473,8 @@ const RoomReserve = () => {
                             }}
                           >
                             <Checkbox
-                              checked={isChecked}
+                              checked={el.checked}
+                              disabled={el.disabled}
                               sx={{
                                 "& .MuiSvgIcon-root": {
                                   fontSize: "30px",
@@ -394,7 +495,7 @@ const RoomReserve = () => {
                         >
                           晚上
                         </TableCell>
-                        {data.night.map((isChecked, index) => (
+                        {data.night.map((el, index) => (
                           <TableCell
                             key={index}
                             align="center"
@@ -405,7 +506,8 @@ const RoomReserve = () => {
                             }}
                           >
                             <Checkbox
-                              checked={isChecked}
+                              checked={el.checked}
+                              disabled={el.disabled}
                               sx={{
                                 "& .MuiSvgIcon-root": {
                                   fontSize: "30px",
@@ -558,11 +660,10 @@ const RoomReserve = () => {
             </TableContainer>
           </Box>
 
-          <Box>
+          {/* <Box>
             <Typography variant="subtitle1" sx={{ mb: 1 }}>
               其他場地推薦
             </Typography>
-            {/* here */}
             {select_locationData.map((data) => (
               <Fragment key={data.location}>
                 <Box
@@ -589,22 +690,22 @@ const RoomReserve = () => {
                           </TableCell>
                           {columnsDate.map((column) => (
                             <TableCell
-                              key={column.date}
+                              key={column.format("YYYY-MM-DD")}
                               align="center"
                               sx={{ borderRight: "1px solid #e5e5e5" }}
                             >
-                              {column.date}
+                              {column.format("MM/DD")}
                             </TableCell>
                           ))}
                         </TableRow>
                         <TableRow>
-                          {dayWeek.map((week) => (
+                          {columnsDate.map((column, index) => (
                             <TableCell
-                              key={week.weekday}
+                              key={column.format("YYYY-MM-DD")}
                               align="center"
                               sx={{ borderRight: "1px solid #e5e5e5" }}
                             >
-                              {week.weekday}
+                              {columnsDay[index]}
                             </TableCell>
                           ))}
                         </TableRow>
@@ -719,7 +820,7 @@ const RoomReserve = () => {
                 </Box>
               </Fragment>
             ))}
-          </Box>
+          </Box> */}
         </Box>
       </Paper>
     </>

@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "customize-cra": "^1.0.0",
+    "dayjs": "^1.11.9",
     "react-app-rewired": "^2.2.1"
   }
 }
