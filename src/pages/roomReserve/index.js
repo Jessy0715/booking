@@ -27,34 +27,6 @@ import CropDinIcon from "@mui/icons-material/CropDin";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 const RoomReserve = () => {
-  const initialChecklist = [
-    { checked: false, disabled: false },
-    { checked: false, disabled: true },
-    { checked: true, disabled: false },
-    { checked: false, disabled: false },
-    { checked: true, disabled: true },
-  ];
-
-  const [checkedList, setCheckedList] = useState(initialChecklist);
-
-  const handleChange = (index, type) => (event) => {
-    console.log(index, type, event.target.checked);
-    const updatedCheckedList = checkedList.map(
-      (item, i) => {
-        if (index === i) {
-          console.log(index);
-          return { ...item, checked: event.target.checked };
-        } else {
-          return item;
-        }
-      }
-      // index === i ? { ...item, checked: event.target.checked } : item
-    );
-    setCheckedList(updatedCheckedList);
-  };
-
-  //  ======================
-
   const [columnsDate, setColumnsDate] = useState(() => {
     const currentDate = dayjs();
     const startOfWeek = currentDate.startOf("week");
@@ -73,175 +45,147 @@ const RoomReserve = () => {
   const dayNames = ["日", "一", "二", "三", "四", "五", "六"];
   const columnsDay = columnsDate.map((column) => dayNames[column.day()]);
 
-  const select_locationData = [
+  // ===============================
+
+  const initialTableData = [
     {
       location: "普 101",
-      checked: {
-        morning: [
-          {
-            date: columnsDate[0],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[1],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[2],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[3],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[4],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[5],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[6],
-            isCheck: false,
-            disabled: false,
-          },
-        ],
-        noon: [
-          {
-            date: columnsDate[0],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[1],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[2],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[3],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[4],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[5],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[6],
-            isCheck: false,
-            disabled: false,
-          },
-        ],
-        night: [
-          {
-            date: columnsDate[0],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[1],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[2],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[3],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[4],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[5],
-            isCheck: false,
-            disabled: false,
-          },
-          {
-            date: columnsDate[6],
-            isCheck: false,
-            disabled: false,
-          },
-        ],
-      },
+      morning: [
+        {
+          date: columnsDate[0],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[1],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[2],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[3],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[4],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[5],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[6],
+          checked: false,
+          disabled: false,
+        },
+      ],
+      noon: [
+        {
+          date: columnsDate[0],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[1],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[2],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[3],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[4],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[5],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[6],
+          checked: false,
+          disabled: false,
+        },
+      ],
+      night: [
+        {
+          date: columnsDate[0],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[1],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[2],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[3],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[4],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[5],
+          checked: false,
+          disabled: false,
+        },
+        {
+          date: columnsDate[6],
+          checked: false,
+          disabled: false,
+        },
+      ],
     },
   ];
 
-  const [locationsData, setLocationsData] = useState(select_locationData);
+  const [locationsData, setLocationsData] = useState(initialTableData);
 
   const [rentType, setRentType] = useState("");
   const [rentDate, setRentDate] = useState("");
   const [rentReason, setReason] = useState("");
-  const handleTest = (timePeriod, location, index) => (event) => {
-    // console.log(timePeriod, location, index, event.target.checked);
 
-    const updatedCheckedList = locationsData.map((item, i) => {
-      if (
-        location === item.location &&
-        timePeriod === item.checked[timePeriod] &&
-        index === i
-      ) {
-        const updatedChecked = [...item.checked[timePeriod]];
-        updatedChecked[index]["isCheck"] = event.target.checked;
-        console.log(updatedChecked[index]["isCheck"]);
-        return {
-          ...item,
-          checked: {
-            ...item.checked,
-            [timePeriod]: updatedChecked,
-          },
-        };
-      }
-      // console.log(item);
-      return item;
-    });
-    setLocationsData(updatedCheckedList);
-  };
+  const handleCheckboxChange =
+    (outerIndex, innerIndex, period, { date }) =>
+    (event) => {
+      console.log(
+        outerIndex,
+        innerIndex,
+        period,
+        event.target.checked,
+        date.format("YYYY-MM-DD")
+      );
+      const updatedChecklists = [...locationsData];
 
-  const handleCheckboxChange = (timePeriod, location, index) => (event) => {
-    console.log("called::", timePeriod, location, index, event.target.checked);
-    const updatedLocationsData = locationsData.map((data) => {
-      if (data.location == location) {
-        const updatedChecked = [...data.checked[timePeriod]];
-        updatedChecked[index]["isCheck"] = event.target.checked;
-        return {
-          ...data,
-          checked: {
-            ...data.checked,
-            [timePeriod]: updatedChecked,
-          },
-        };
-      }
-      return data;
-    });
-
-    setLocationsData(updatedLocationsData);
-  };
+      updatedChecklists[outerIndex][period][innerIndex].checked =
+        event.target.checked;
+      setLocationsData(updatedChecklists);
+    };
 
   const handleRentTypeChange = (event) => {
     setRentType(event.target.value);
@@ -309,14 +253,6 @@ const RoomReserve = () => {
         elevation={0}
         sx={{ pt: 7, pb: 8, backgroundColor: "#e5e5e5" }}
       >
-        {checkedList.map((item, index) => (
-          <Checkbox
-            key={index}
-            checked={item.checked}
-            disabled={item.disabled}
-            onChange={handleChange(index, "noon")}
-          />
-        ))}
         <Box sx={{ maxWidth: "70vw", marginX: "auto", mt: 1 }}>
           <Grid
             container
@@ -511,7 +447,7 @@ const RoomReserve = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {select_locationData.map((data) => (
+                  {locationsData.map((data, outerIndex) => (
                     <Fragment key={data.location}>
                       <TableRow>
                         <TableCell
@@ -531,9 +467,9 @@ const RoomReserve = () => {
                         >
                           上午
                         </TableCell>
-                        {data.checked.morning.map((el, index) => (
+                        {data.morning.map((el, innerIndex) => (
                           <TableCell
-                            key={index}
+                            key={innerIndex}
                             align="center"
                             sx={{
                               borderRight: "1px solid #e5e5e5",
@@ -541,27 +477,15 @@ const RoomReserve = () => {
                               py: 0,
                             }}
                           >
-                            {/* <Checkbox
-                              checked={el.isCheck}
+                            <Checkbox
+                              key={innerIndex}
+                              checked={el.checked}
                               disabled={el.disabled}
                               onChange={handleCheckboxChange(
+                                outerIndex,
+                                innerIndex,
                                 "morning",
-                                data.location,
-                                index
-                              )}
-                              sx={{
-                                "& .MuiSvgIcon-root": {
-                                  fontSize: "30px",
-                                },
-                              }}
-                            /> */}
-                            <Checkbox
-                              checked={el.isCheck}
-                              disabled={el.disabled}
-                              onChange={handleTest(
-                                "morning",
-                                data.location,
-                                index
+                                el
                               )}
                               sx={{
                                 "& .MuiSvgIcon-root": {
@@ -572,7 +496,7 @@ const RoomReserve = () => {
                           </TableCell>
                         ))}
                       </TableRow>
-                      {/* <TableRow>
+                      <TableRow>
                         <TableCell
                           align="center"
                           sx={{
@@ -583,9 +507,9 @@ const RoomReserve = () => {
                         >
                           下午
                         </TableCell>
-                        {data.checked.noon.map((el, index) => (
+                        {data.noon.map((el, innerIndex) => (
                           <TableCell
-                            key={index}
+                            key={innerIndex}
                             align="center"
                             sx={{
                               borderRight: "1px solid #e5e5e5",
@@ -594,17 +518,15 @@ const RoomReserve = () => {
                             }}
                           >
                             <Checkbox
-                              checked={el.isCheck}
+                              key={innerIndex}
+                              checked={el.checked}
                               disabled={el.disabled}
-                              onChange={(event) =>
-                                handleCheckboxChange(
-                                  "noon",
-                                  data.location,
-                                  index,
-                                  event.target.checked,
-                                  el.date
-                                )
-                              }
+                              onChange={handleCheckboxChange(
+                                outerIndex,
+                                innerIndex,
+                                "noon",
+                                el
+                              )}
                               sx={{
                                 "& .MuiSvgIcon-root": {
                                   fontSize: "30px",
@@ -625,9 +547,9 @@ const RoomReserve = () => {
                         >
                           晚上
                         </TableCell>
-                        {data.checked.night.map((el, index) => (
+                        {data.night.map((el, innerIndex) => (
                           <TableCell
-                            key={index}
+                            key={innerIndex}
                             align="center"
                             sx={{
                               borderRight: "1px solid #e5e5e5",
@@ -636,17 +558,15 @@ const RoomReserve = () => {
                             }}
                           >
                             <Checkbox
-                              checked={el.isCheck}
+                              key={innerIndex}
+                              checked={el.checked}
                               disabled={el.disabled}
-                              onChange={(event) =>
-                                handleCheckboxChange(
-                                  "night",
-                                  data.location,
-                                  index,
-                                  event.target.checked,
-                                  el.date
-                                )
-                              }
+                              onChange={handleCheckboxChange(
+                                outerIndex,
+                                innerIndex,
+                                "night",
+                                el
+                              )}
                               sx={{
                                 "& .MuiSvgIcon-root": {
                                   fontSize: "30px",
@@ -655,7 +575,7 @@ const RoomReserve = () => {
                             />
                           </TableCell>
                         ))}
-                      </TableRow> */}
+                      </TableRow>
                     </Fragment>
                   ))}
                 </TableBody>
@@ -667,7 +587,7 @@ const RoomReserve = () => {
             <Typography variant="subtitle1" sx={{ mb: 1 }}>
               其他場地推薦
             </Typography>
-            {select_locationData.map((data) => (
+            {initialTableData.map((data) => (
               <Fragment key={data.location}>
                 <Box
                   component="main"
