@@ -27,122 +27,33 @@ import CropDinIcon from "@mui/icons-material/CropDin";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 const RoomReserve = () => {
-  const select_locationData = [
-    {
-      location: "普 101",
-      morning: [
-        {
-          checked: false,
-          disabled: true,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-      ],
-      noon: [
-        {
-          checked: false,
-          disabled: true,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-      ],
-      night: [
-        {
-          checked: false,
-          disabled: true,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-        {
-          checked: false,
-          disabled: false,
-        },
-      ],
-    },
+  const initialChecklist = [
+    { checked: false, disabled: false },
+    { checked: false, disabled: true },
+    { checked: true, disabled: false },
+    { checked: false, disabled: false },
+    { checked: true, disabled: true },
   ];
-  // const [isChecked, setIsChecked] = useState(false);
-  // const handleCheckboxChange = (event) => {
-  //   setIsChecked(event.target.checked);
-  // };
 
-  // useEffect(() => {
-  //   console.log("isChecked:", isChecked);
-  // }, [isChecked]);
-  const [rentType, setRentType] = useState("");
-  const [rentDate, setRentDate] = useState("");
-  const [rentReason, setReason] = useState("");
+  const [checkedList, setCheckedList] = useState(initialChecklist);
 
-  const handleRentTypeChange = (event) => {
-    setRentType(event.target.value);
+  const handleChange = (index, type) => (event) => {
+    console.log(index, type, event.target.checked);
+    const updatedCheckedList = checkedList.map(
+      (item, i) => {
+        if (index === i) {
+          console.log(index);
+          return { ...item, checked: event.target.checked };
+        } else {
+          return item;
+        }
+      }
+      // index === i ? { ...item, checked: event.target.checked } : item
+    );
+    setCheckedList(updatedCheckedList);
   };
-  const handleRentDateChange = (event) => {
-    setRentDate(event.target.value);
-  };
-  const handleRentReasonChange = (event) => {
-    setReason(event.target.value);
-  };
+
+  //  ======================
 
   const [columnsDate, setColumnsDate] = useState(() => {
     const currentDate = dayjs();
@@ -160,8 +71,187 @@ const RoomReserve = () => {
     return dates;
   });
   const dayNames = ["日", "一", "二", "三", "四", "五", "六"];
-
   const columnsDay = columnsDate.map((column) => dayNames[column.day()]);
+
+  const select_locationData = [
+    {
+      location: "普 101",
+      checked: {
+        morning: [
+          {
+            date: columnsDate[0],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[1],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[2],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[3],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[4],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[5],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[6],
+            isCheck: false,
+            disabled: false,
+          },
+        ],
+        noon: [
+          {
+            date: columnsDate[0],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[1],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[2],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[3],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[4],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[5],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[6],
+            isCheck: false,
+            disabled: false,
+          },
+        ],
+        night: [
+          {
+            date: columnsDate[0],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[1],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[2],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[3],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[4],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[5],
+            isCheck: false,
+            disabled: false,
+          },
+          {
+            date: columnsDate[6],
+            isCheck: false,
+            disabled: false,
+          },
+        ],
+      },
+    },
+  ];
+
+  const [locationsData, setLocationsData] = useState(select_locationData);
+
+  const [rentType, setRentType] = useState("");
+  const [rentDate, setRentDate] = useState("");
+  const [rentReason, setReason] = useState("");
+  const handleTest = (timePeriod, location, index) => (event) => {
+    // console.log(timePeriod, location, index, event.target.checked);
+
+    const updatedCheckedList = locationsData.map((item, i) => {
+      if (
+        location === item.location &&
+        timePeriod === item.checked[timePeriod] &&
+        index === i
+      ) {
+        const updatedChecked = [...item.checked[timePeriod]];
+        updatedChecked[index]["isCheck"] = event.target.checked;
+        console.log(updatedChecked[index]["isCheck"]);
+        return {
+          ...item,
+          checked: {
+            ...item.checked,
+            [timePeriod]: updatedChecked,
+          },
+        };
+      }
+      // console.log(item);
+      return item;
+    });
+    setLocationsData(updatedCheckedList);
+  };
+
+  const handleCheckboxChange = (timePeriod, location, index) => (event) => {
+    console.log("called::", timePeriod, location, index, event.target.checked);
+    const updatedLocationsData = locationsData.map((data) => {
+      if (data.location == location) {
+        const updatedChecked = [...data.checked[timePeriod]];
+        updatedChecked[index]["isCheck"] = event.target.checked;
+        return {
+          ...data,
+          checked: {
+            ...data.checked,
+            [timePeriod]: updatedChecked,
+          },
+        };
+      }
+      return data;
+    });
+
+    setLocationsData(updatedLocationsData);
+  };
+
+  const handleRentTypeChange = (event) => {
+    setRentType(event.target.value);
+  };
+  const handleRentDateChange = (event) => {
+    setRentDate(event.target.value);
+  };
+  const handleRentReasonChange = (event) => {
+    setReason(event.target.value);
+  };
 
   // 前一周
   const handlePreviousWeek = () => {
@@ -207,6 +297,10 @@ const RoomReserve = () => {
   // 立即預約
   const reserveRoomASAP = () => {};
 
+  useEffect(() => {
+    // console.log(">>>:", locationsData);
+  }, [locationsData]);
+
   return (
     <>
       <Header />
@@ -215,6 +309,14 @@ const RoomReserve = () => {
         elevation={0}
         sx={{ pt: 7, pb: 8, backgroundColor: "#e5e5e5" }}
       >
+        {checkedList.map((item, index) => (
+          <Checkbox
+            key={index}
+            checked={item.checked}
+            disabled={item.disabled}
+            onChange={handleChange(index, "noon")}
+          />
+        ))}
         <Box sx={{ maxWidth: "70vw", marginX: "auto", mt: 1 }}>
           <Grid
             container
@@ -429,7 +531,7 @@ const RoomReserve = () => {
                         >
                           上午
                         </TableCell>
-                        {data.morning.map((el, index) => (
+                        {data.checked.morning.map((el, index) => (
                           <TableCell
                             key={index}
                             align="center"
@@ -439,9 +541,28 @@ const RoomReserve = () => {
                               py: 0,
                             }}
                           >
-                            <Checkbox
-                              checked={el.checked}
+                            {/* <Checkbox
+                              checked={el.isCheck}
                               disabled={el.disabled}
+                              onChange={handleCheckboxChange(
+                                "morning",
+                                data.location,
+                                index
+                              )}
+                              sx={{
+                                "& .MuiSvgIcon-root": {
+                                  fontSize: "30px",
+                                },
+                              }}
+                            /> */}
+                            <Checkbox
+                              checked={el.isCheck}
+                              disabled={el.disabled}
+                              onChange={handleTest(
+                                "morning",
+                                data.location,
+                                index
+                              )}
                               sx={{
                                 "& .MuiSvgIcon-root": {
                                   fontSize: "30px",
@@ -451,7 +572,7 @@ const RoomReserve = () => {
                           </TableCell>
                         ))}
                       </TableRow>
-                      <TableRow>
+                      {/* <TableRow>
                         <TableCell
                           align="center"
                           sx={{
@@ -462,7 +583,7 @@ const RoomReserve = () => {
                         >
                           下午
                         </TableCell>
-                        {data.noon.map((el, index) => (
+                        {data.checked.noon.map((el, index) => (
                           <TableCell
                             key={index}
                             align="center"
@@ -473,8 +594,17 @@ const RoomReserve = () => {
                             }}
                           >
                             <Checkbox
-                              checked={el.checked}
+                              checked={el.isCheck}
                               disabled={el.disabled}
+                              onChange={(event) =>
+                                handleCheckboxChange(
+                                  "noon",
+                                  data.location,
+                                  index,
+                                  event.target.checked,
+                                  el.date
+                                )
+                              }
                               sx={{
                                 "& .MuiSvgIcon-root": {
                                   fontSize: "30px",
@@ -495,7 +625,7 @@ const RoomReserve = () => {
                         >
                           晚上
                         </TableCell>
-                        {data.night.map((el, index) => (
+                        {data.checked.night.map((el, index) => (
                           <TableCell
                             key={index}
                             align="center"
@@ -506,8 +636,17 @@ const RoomReserve = () => {
                             }}
                           >
                             <Checkbox
-                              checked={el.checked}
+                              checked={el.isCheck}
                               disabled={el.disabled}
+                              onChange={(event) =>
+                                handleCheckboxChange(
+                                  "night",
+                                  data.location,
+                                  index,
+                                  event.target.checked,
+                                  el.date
+                                )
+                              }
                               sx={{
                                 "& .MuiSvgIcon-root": {
                                   fontSize: "30px",
@@ -516,145 +655,9 @@ const RoomReserve = () => {
                             />
                           </TableCell>
                         ))}
-                      </TableRow>
+                      </TableRow> */}
                     </Fragment>
                   ))}
-                  {/* <TableRow>
-                    <TableCell
-                      align="center"
-                      rowSpan={3}
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    >
-                      普 101
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{
-                        borderRight: "1px solid #e5e5e5",
-                        background: "#938C8C",
-                        color: "#fff",
-                      }}
-                    >
-                      上午
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5", px: 0, py: 0 }}
-                    >
-                      <Checkbox 
-                        sx={{
-                          "& .MuiSvgIcon-root": {
-                            fontSize: "30px",
-                          },
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell
-                      align="center"
-                      sx={{
-                        borderRight: "1px solid #e5e5e5",
-                        background: "#938C8C",
-                        color: "#fff",
-                      }}
-                    >
-                      下午
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell
-                      align="center"
-                      sx={{
-                        borderRight: "1px solid #e5e5e5",
-                        background: "#938C8C",
-                        color: "#fff",
-                      }}
-                    >
-                      晚上
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    >
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    ></TableCell>
-                  </TableRow> */}
                 </TableBody>
               </Table>
             </TableContainer>
