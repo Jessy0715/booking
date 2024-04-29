@@ -73,10 +73,14 @@ const Login = () => {
   // 登入
   const handleLogin = () => {
     if (!account) {
+      setAlert(true);
       setAccountEmptyError(true);
+      return
     }
     if (!password) {
+      setAlert(true);
       setPasswordEmptyError(true);
+      return
     }
     // reset
     // setAccount("");
@@ -88,7 +92,7 @@ const Login = () => {
       // 密碼格式錯誤，顯示錯誤訊息
       return;
     }
-
+    navigate("/roomInfo");
     // 執行登入邏輯，例如：
     // api.login(account, password).then((response) => { ... });
   };

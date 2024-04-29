@@ -21,33 +21,33 @@ const localizer = momentLocalizer(moment);
 const events = [
   {
     title: "科學競技比賽",
-    start: new Date(2023, 6, 20, 10, 0),
-    end: new Date(2023, 6, 20, 12, 0),
+    start: new Date(2024, 4, 1, 10, 0),
+    end: new Date(2024, 4, 1, 12, 0),
   },
   {
     title: "籃球比賽",
-    start: new Date(2023, 6, 21, 14, 0),
-    end: new Date(2023, 6, 21, 16, 0),
+    start: new Date(2024, 4, 1, 14, 0),
+    end: new Date(2024, 4, 1, 16, 0),
   },
   {
     title: "科學玩實驗1",
-    start: new Date(2023, 6, 22, 9, 0),
-    end: new Date(2023, 6, 22, 11, 30),
+    start: new Date(2024, 4, 13, 9, 0),
+    end: new Date(2024, 4, 13, 11, 30),
   },
   {
     title: "科學玩實驗2",
-    start: new Date(2023, 6, 22, 12, 0),
-    end: new Date(2023, 6, 22, 14, 30),
+    start: new Date(2024, 4, 13, 12, 0),
+    end: new Date(2024, 4, 13, 14, 30),
   },
   {
     title: "科學玩實驗3",
-    start: new Date(2023, 6, 22, 15, 0),
-    end: new Date(2023, 6, 22, 16, 30),
+    start: new Date(2024, 4, 13, 15, 0),
+    end: new Date(2024, 4, 13, 16, 30),
   },
   {
     title: "科學玩實驗4",
-    start: new Date(2023, 6, 22, 20, 0),
-    end: new Date(2023, 6, 22, 21, 30),
+    start: new Date(2024, 4, 13, 20, 0),
+    end: new Date(2024, 4, 13, 21, 30),
   },
 ];
 // 有調整成功，但整體畫面無效
