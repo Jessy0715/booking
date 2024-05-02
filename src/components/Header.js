@@ -1,4 +1,5 @@
-import { Paper, Grid } from "@mui/material";
+import { Paper, Grid, Link } from "@mui/material";
+
 const Header = () => {
   return (
     <>
@@ -19,7 +20,9 @@ const Header = () => {
             <h2>教室場地借用管理系統</h2>
           </Grid>
           <Grid item sm={8} sx={{ textAlign: "right" }}>
-            <div>登出</div>
+          <Link href="/" underline="none" sx={{ color: "#fff" }}>
+          登出
+          </Link>
           </Grid>
         </Grid>
       </Paper>
