@@ -434,6 +434,7 @@ const Admin = () => {
         open={cropImgModalOpen}
         onClose={handleThumbnailClose}
         maxWidth="md"
+        fullWidth
       >
         <DialogTitle>裁剪照片</DialogTitle>
         <DialogContent>
@@ -446,7 +447,7 @@ const Admin = () => {
           {selectedImage && (
             <Cropper
               src={selectedImage}
-              style={{ height: 400, width: "50%" }}
+              style={{ height: 400, width: "80%" }}
               // Cropper.js options
               initialAspectRatio={1}
               aspectRatio={1}
@@ -473,7 +474,7 @@ const Admin = () => {
         </DialogActions>
       </Dialog>
       {/* 新增/編輯場地列表跳窗 */}
-      <Dialog open={isModalOpen} onClose={handleCancel}>
+      <Dialog open={isModalOpen} onClose={handleCancel} maxWidth="lg">
         <DialogTitle id="alert-dialog-title">編輯場地列表</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
