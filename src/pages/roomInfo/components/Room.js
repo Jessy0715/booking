@@ -14,10 +14,9 @@ import { useStyles } from "../../../bookingStyle";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import RoomTable from "./RoomTable";
 import MultiSwiper from "./MultiSwiper";
-
-// Table 相關組件: TableContainer, Table, TableHead, TableBody, TableRow, TableCell, tableCellClasses
-
+import { useNavigate } from "react-router-dom";
 const Room = () => {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
 
   // pagination active 狀態
@@ -36,38 +35,35 @@ const Room = () => {
   const handlePageChange = (ev, page) => {
     setCurrentPage(page);
   };
+  const goReservePage = () => {
+    navigate("/roomReserve");
+  };
 
   const classes = useStyles();
   const data = [
     {
       id: 1,
-      roomImg: [roomImg1, roomImg2],
-      // backgroundImage: `url(${roomImg1})`,
+      // roomImg: [roomImg1, roomImg2],
+      backgroundImage: `url(${roomImg1})`,
       title: "普101館",
       desc: "1樓，階梯教室，空間可容納 302 人。",
-      price: [
-        {
-          name: "場地清潔費",
-          morning: "1000",
-          afternoon: "2000",
-          night: "3000",
-        },
-      ],
+      price: {
+        morning: "1000",
+        afternoon: "2000",
+        night: "3000",
+      },
     },
     {
       id: 2,
-      roomImg: [roomImg1, roomImg2],
-      // backgroundImage: `url(${roomImg2})`,
+      // roomImg: [roomImg1, roomImg2],
+      backgroundImage: `url(${roomImg2})`,
       title: "普102館",
       desc: "2樓，階梯教室，空間可容納 400 人。",
-      price: [
-        {
-          name: "場地清潔費",
-          morning: "2000",
-          afternoon: "3500",
-          night: "4000",
-        },
-      ],
+      price: {
+        morning: "2000",
+        afternoon: "3500",
+        night: "4000",
+      },
     },
   ];
   return (
@@ -75,7 +71,7 @@ const Room = () => {
       <Paper component="main" elevation={0} sx={{ backgroundColor: "#E5E5E5" }}>
         <Grid container direction="column" justifyContent="flex-start">
           {data.map((el) => {
-            const { id, roomImg, title, desc, price } = el;
+            const { id, roomImg, title, desc, price, backgroundImage } = el;
             return (
               <Paper
                 key={id}
@@ -93,22 +89,22 @@ const Room = () => {
                 <Grid
                   container
                   direction="row"
-                  alignItems="stretch"
                   wrap="nowrap"
                 >
-                  {/* <Box
+                <Grid item xs={4}>
+                  <Box
                     sx={{
                       backgroundImage: backgroundImage,
                       backgroundRepeat: "no-repeat",
                       backgroundPosition: "center",
                       backgroundSize: "cover",
-                      mr: 3.5,
-                      width: "300px",
-                      height: "185px",
+                      width: "95%",
+                      height: "200px",
                     }}
-                  /> */}
-                  <MultiSwiper roomImg={roomImg}></MultiSwiper>
-                  <Grid>
+                  />
+                  {/* <MultiSwiper roomImg={roomImg}></MultiSwiper> */}
+                </Grid>
+                  <Grid item xs={8}>
                     <Grid
                       container
                       direction="row"
@@ -125,7 +121,9 @@ const Room = () => {
                         </Box>
                       </Box>
                       <Box>
-                        <Button variant="outlined">前往預約</Button>
+                        <Button variant="outlined" onClick={goReservePage}>
+                          前往預約
+                        </Button>
                       </Box>
                     </Grid>
                     <Box>

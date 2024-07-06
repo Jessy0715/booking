@@ -20,7 +20,7 @@ const Header = () => {
             <h2>教室場地借用管理系統</h2>
           </Grid>
           <Grid item sm={8} sx={{ textAlign: "right" }}>
-          <Link href="/" underline="none" sx={{ color: "#fff" }}>
+          <Link href="/login" underline="none" sx={{ color: "#fff" }}>
           登出
           </Link>
           </Grid>

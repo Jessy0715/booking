@@ -19,7 +19,7 @@ const StyledHeaderTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-const RoomTable = ({id, price}) => {
+const RoomTable = ({ id, price }) => {
   return (
     <>
       <TableContainer
@@ -37,22 +37,19 @@ const RoomTable = ({id, price}) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {price.map((row) => (
-              <TableRow
-                key={id}
-                sx={{
-                  "&:last-child td": {
-                    borderRight: 1,
-                    borderRightColor: "#E5E5E5",
-                  },
-                }}
-              >
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.morning}元</TableCell>
-                <TableCell>{row.afternoon}元</TableCell>
-                <TableCell>{row.night}元</TableCell>
-              </TableRow>
-            ))}
+            <TableRow
+              sx={{
+                "&:last-child td": {
+                  borderRight: 1,
+                  borderRightColor: "#E5E5E5",
+                },
+              }}
+            >
+              <TableCell>場地費用</TableCell>
+              <TableCell>{price.morning}元</TableCell>
+              <TableCell>{price.afternoon}元</TableCell>
+              <TableCell>{price.night}元</TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>

@@ -13,7 +13,9 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import mainRoom from "@/assets/image/mainRoom.jpg";
+import { useNavigate } from "react-router-dom";
 const Register = () => {
+  const navigate = useNavigate();
   const [account, setAccount] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(true);
@@ -62,6 +64,7 @@ const Register = () => {
       // 密碼格式錯誤，顯示錯誤訊息
       return;
     }
+    navigate("/login");
 
     // 執行登入邏輯，例如：
     // api.login(account, password).then((response) => { ... });

@@ -1,249 +1,49 @@
 import { useState, useEffect, memo, Fragment } from "react";
-import dayjs from "dayjs";
 import Header from "@/components/Header";
-import {
-  Paper,
-  Grid,
-  TextField,
-  Divider,
-  Typography,
-  Button,
-  Checkbox,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import RentCalendar from "@/components/rentCalendar";
+import { Paper, Grid, Typography, Button, Box } from "@mui/material";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import CropDinIcon from "@mui/icons-material/CropDin";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { Modal, ConfigProvider, Input, Select, Space, Flex } from "antd";
+
 const RoomReserve = () => {
-  const [columnsDate, setColumnsDate] = useState(() => {
-    const currentDate = dayjs();
-    const startOfWeek = currentDate.startOf("week");
-    const endOfWeek = currentDate.endOf("week");
-    const dates = [];
-    let currentDay = startOfWeek;
-    while (
-      currentDay.isBefore(endOfWeek, "day") ||
-      currentDay.isSame(endOfWeek, "day")
-    ) {
-      dates.push(currentDay);
-      currentDay = currentDay.add(1, "day");
-    }
-    return dates;
-  });
-  const dayNames = ["日", "一", "二", "三", "四", "五", "六"];
-  const columnsDay = columnsDate.map((column) => dayNames[column.day()]);
-
-  // ===============================
-
-  const initialTableData = [
-    {
-      location: "普 101",
-      morning: [
-        {
-          date: columnsDate[0],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[1],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[2],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[3],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[4],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[5],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[6],
-          checked: false,
-          disabled: false,
-        },
-      ],
-      noon: [
-        {
-          date: columnsDate[0],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[1],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[2],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[3],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[4],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[5],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[6],
-          checked: false,
-          disabled: false,
-        },
-      ],
-      night: [
-        {
-          date: columnsDate[0],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[1],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[2],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[3],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[4],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[5],
-          checked: false,
-          disabled: false,
-        },
-        {
-          date: columnsDate[6],
-          checked: false,
-          disabled: false,
-        },
-      ],
+  const modalStyles = {
+    header: {
+      borderLeft: `5px solid #938C8C`,
+      borderRadius: 0,
+      paddingInlineStart: 5,
     },
-  ];
-
-  const [locationsData, setLocationsData] = useState(initialTableData);
-
-  const [rentType, setRentType] = useState("");
-  const [rentDate, setRentDate] = useState("");
+  };
+  const [rentSpace, setRentSpace] = useState(null);
   const [rentReason, setReason] = useState("");
 
-  const handleCheckboxChange =
-    (outerIndex, innerIndex, period, { date }) =>
-    (event) => {
-      console.log(
-        outerIndex,
-        innerIndex,
-        period,
-        event.target.checked,
-        date.format("YYYY-MM-DD")
-      );
-      const updatedChecklists = [...locationsData];
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-      updatedChecklists[outerIndex][period][innerIndex].checked =
-        event.target.checked;
-      setLocationsData(updatedChecklists);
-    };
-
-  const handleRentTypeChange = (event) => {
-    setRentType(event.target.value);
-  };
-  const handleRentDateChange = (event) => {
-    setRentDate(event.target.value);
+  const handleRentSpaceChange = (value) => {
+    setRentSpace(value);
   };
   const handleRentReasonChange = (event) => {
     setReason(event.target.value);
   };
 
-  // 前一周
-  const handlePreviousWeek = () => {
-    const newStartDate = columnsDate[0].subtract(1, "week");
-    const newEndDate = newStartDate.add(6, "day");
-    const newDates = [];
-
-    let currentDay = newStartDate;
-    while (
-      currentDay.isBefore(newEndDate, "day") ||
-      currentDay.isSame(newEndDate, "day")
-    ) {
-      newDates.push(currentDay);
-      currentDay = currentDay.add(1, "day");
-    }
-
-    setColumnsDate(newDates);
+  const handleOk = () => {
+    setIsModalOpen(false);
   };
 
-  // 後一周
-  const handleNextWeek = () => {
-    const newStartDate = columnsDate[0].add(1, "week");
-    const newEndDate = newStartDate.add(6, "day");
-    const newDates = [];
-
-    let currentDay = newStartDate;
-    while (
-      currentDay.isBefore(newEndDate, "day") ||
-      currentDay.isSame(newEndDate, "day")
-    ) {
-      newDates.push(currentDay);
-      currentDay = currentDay.add(1, "day");
-    }
-
-    setColumnsDate(newDates);
+  const handleCancel = () => {
+    setIsModalOpen(false);
   };
 
   // 查詢館藏
   const searchRoom = () => {
-    // api.searchRoom(rentType, rentDate, rentReason).then((response) => { ... });
+    // api.searchRoom(rentSpace, rentDate, rentReason).then((response) => { ... });
   };
 
   // 立即預約
-  const reserveRoomASAP = () => {};
+  const reserveRoomASAP = () => {
+    setIsModalOpen(true);
+  };
 
-  useEffect(() => {
-    // console.log(">>>:", locationsData);
-  }, [locationsData]);
+  // useEffect();
 
   return (
     <>
@@ -253,70 +53,7 @@ const RoomReserve = () => {
         elevation={0}
         sx={{ pt: 7, pb: 8, backgroundColor: "#e5e5e5" }}
       >
-        <Box sx={{ maxWidth: "70vw", marginX: "auto", mt: 1 }}>
-          <Grid
-            container
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            sx={{ mb: 4 }}
-          >
-            <FormControl
-              sx={{ m: 1, width: "30%", mt: 0, mb: 0, mr: 3, ml: 0 }}
-              variant="outlined"
-              required
-            >
-              <InputLabel id="demo-simple-select-label">租借館別</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={rentType}
-                label="租借館別"
-                sx={{
-                  backgroundColor: "white",
-                }}
-                onChange={handleRentTypeChange}
-              >
-                <MenuItem value={101}>101館</MenuItem>
-                <MenuItem value={102}>102館</MenuItem>
-                <MenuItem value={103}>103館</MenuItem>
-              </Select>
-            </FormControl>
-            <TextField
-              required
-              id="rent-date"
-              label="租借日期"
-              variant="outlined"
-              sx={{ backgroundColor: "#fff", mr: 3 }}
-              value={rentDate}
-              onChange={handleRentDateChange}
-            />
-            <TextField
-              required
-              id="rent-reason"
-              label="租借事由"
-              variant="outlined"
-              sx={{ backgroundColor: "#fff", mr: 3 }}
-              value={rentReason}
-              onChange={handleRentReasonChange}
-            />
-            <SearchIcon
-              fontSize="large"
-              color="secondary"
-              sx={{ color: "#757070", cursor: "pointer" }}
-              onClick={searchRoom}
-            />
-          </Grid>
-          <Divider
-            variant="middle"
-            sx={{
-              borderWidth: "1.2px",
-              borderColor: "#938C8C",
-              marginLeft: 0,
-              marginRight: 0,
-              mb: 5,
-            }}
-          />
+        <Box sx={{ maxWidth: "80vw", marginX: "auto", mt: 1 }}>
           <Box
             sx={{
               display: "flex",
@@ -326,426 +63,89 @@ const RoomReserve = () => {
             }}
           >
             <Box>
-              <Typography variant="subtitle2">
-                請點擊或框選需要預約的時段進行預約
-              </Typography>
+              <Typography variant="subtitle2">預約時段說明:</Typography>
               <Typography variant="subtitle2">
                 上午 08:00~12:00 / 下午 13:00~17:00 / 晚上 18:00~22:00
               </Typography>
             </Box>
-            <Box>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Box sx={{ display: "flex", mr: 2 }}>
-                  <CropDinIcon fontSize="large" color="primary" />
-                  <Typography variant="subtitle3">可預約</Typography>
-                </Box>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <CropDinIcon fontSize="large" color="other" />
-                  <Typography variant="subtitle3">不可預約</Typography>
-                </Box>
-              </Box>
-            </Box>
           </Box>
-          <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 5 }}>
-            <Button variant="contained" onClick={reserveRoomASAP}>
-              立即預約
-            </Button>
-          </Box>
-          <Grid container direction="row" alignItems="center" sx={{ mb: 2 }}>
-            <ArrowRightIcon fontSize="large" color="primary" />
-            <Typography variant="subtitle1">租借場地時段表</Typography>
-          </Grid>
-
-          <Grid
-            container
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            sx={{ mb: 2 }}
-          >
-            <Button
-              sx={{
-                border: "none",
-                background: "#fff",
-                "&:hover": {
-                  border: "none",
-                  background: "transparent",
-                },
-                mr: 1,
-              }}
-              variant="outlined"
-              startIcon={<ArrowBackIosNewIcon />}
-              onClick={handlePreviousWeek}
-            >
-              <small>前一周</small>
-            </Button>
-            <Box sx={{ color: "#938C8C" }}>
-              <span>
-                {columnsDate[0].format("YYYY年 MM月 DD日")} -{" "}
-                {columnsDate[6].format("YYYY年 MM月 DD日")}
-              </span>
-            </Box>
-            <Button
-              sx={{
-                border: "none",
-                background: "#fff",
-                "&:hover": {
-                  border: "none",
-                  background: "transparent",
-                },
-                ml: 1,
-              }}
-              variant="outlined"
-              endIcon={<ArrowForwardIosIcon />}
-              onClick={handleNextWeek}
-            >
-              <small>後一周</small>
-            </Button>
-          </Grid>
           <Box
-            component="main"
-            sx={{ backgroundColor: "#b8aeae", px: 5, py: 5, mb: 5 }}
+            sx={{
+              mb: 3,
+            }}
           >
-            <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell
-                      align="center"
-                      rowSpan={2}
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    >
-                      場地
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      rowSpan={2}
-                      sx={{ borderRight: "1px solid #e5e5e5" }}
-                    >
-                      時段
-                    </TableCell>
-                    {columnsDate.map((column, index) => (
-                      <TableCell
-                        key={column.format("YYYY-MM-DD")}
-                        align="center"
-                        sx={{ borderRight: "1px solid #e5e5e5" }}
-                      >
-                        {column.format("MM/DD")}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                  <TableRow>
-                    {columnsDate.map((column, index) => (
-                      <TableCell
-                        key={column.format("YYYY-MM-DD")}
-                        align="center"
-                        sx={{ borderRight: "1px solid #e5e5e5" }}
-                      >
-                        {columnsDay[index]}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {locationsData.map((data, outerIndex) => (
-                    <Fragment key={data.location}>
-                      <TableRow>
-                        <TableCell
-                          rowSpan={3}
-                          align="center"
-                          sx={{ borderRight: "1px solid #e5e5e5" }}
-                        >
-                          {data.location}
-                        </TableCell>
-                        <TableCell
-                          align="center"
-                          sx={{
-                            borderRight: "1px solid #e5e5e5",
-                            background: "#938C8C",
-                            color: "#fff",
-                          }}
-                        >
-                          上午
-                        </TableCell>
-                        {data.morning.map((el, innerIndex) => (
-                          <TableCell
-                            key={innerIndex}
-                            align="center"
-                            sx={{
-                              borderRight: "1px solid #e5e5e5",
-                              px: 0,
-                              py: 0,
-                            }}
-                          >
-                            <Checkbox
-                              key={innerIndex}
-                              checked={el.checked}
-                              disabled={el.disabled}
-                              onChange={handleCheckboxChange(
-                                outerIndex,
-                                innerIndex,
-                                "morning",
-                                el
-                              )}
-                              sx={{
-                                "& .MuiSvgIcon-root": {
-                                  fontSize: "30px",
-                                },
-                              }}
-                            />
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                      <TableRow>
-                        <TableCell
-                          align="center"
-                          sx={{
-                            borderRight: "1px solid #e5e5e5",
-                            background: "#938C8C",
-                            color: "#fff",
-                          }}
-                        >
-                          下午
-                        </TableCell>
-                        {data.noon.map((el, innerIndex) => (
-                          <TableCell
-                            key={innerIndex}
-                            align="center"
-                            sx={{
-                              borderRight: "1px solid #e5e5e5",
-                              px: 0,
-                              py: 0,
-                            }}
-                          >
-                            <Checkbox
-                              key={innerIndex}
-                              checked={el.checked}
-                              disabled={el.disabled}
-                              onChange={handleCheckboxChange(
-                                outerIndex,
-                                innerIndex,
-                                "noon",
-                                el
-                              )}
-                              sx={{
-                                "& .MuiSvgIcon-root": {
-                                  fontSize: "30px",
-                                },
-                              }}
-                            />
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                      <TableRow>
-                        <TableCell
-                          align="center"
-                          sx={{
-                            borderRight: "1px solid #e5e5e5",
-                            background: "#938C8C",
-                            color: "#fff",
-                          }}
-                        >
-                          晚上
-                        </TableCell>
-                        {data.night.map((el, innerIndex) => (
-                          <TableCell
-                            key={innerIndex}
-                            align="center"
-                            sx={{
-                              borderRight: "1px solid #e5e5e5",
-                              px: 0,
-                              py: 0,
-                            }}
-                          >
-                            <Checkbox
-                              key={innerIndex}
-                              checked={el.checked}
-                              disabled={el.disabled}
-                              onChange={handleCheckboxChange(
-                                outerIndex,
-                                innerIndex,
-                                "night",
-                                el
-                              )}
-                              sx={{
-                                "& .MuiSvgIcon-root": {
-                                  fontSize: "30px",
-                                },
-                              }}
-                            />
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    </Fragment>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            <Grid
+              container
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{ mb: 2 }}
+            >
+              <Grid item>
+                <Grid container direction="row" alignItems="center">
+                  <ArrowRightIcon fontSize="large" color="primary" />
+                  <Typography variant="subtitle1">租借場地時段表</Typography>
+                </Grid>
+              </Grid>
+              <Grid item>
+                <Button variant="contained" onClick={reserveRoomASAP}>
+                  <span>立即預約</span>
+                </Button>
+              </Grid>
+            </Grid>
           </Box>
-
-          {/* <Box>
-            <Typography variant="subtitle1" sx={{ mb: 1 }}>
-              其他場地推薦
-            </Typography>
-            {initialTableData.map((data) => (
-              <Fragment key={data.location}>
-                <Box
-                  component="main"
-                  sx={{ backgroundColor: "#b8aeae", px: 4, py: 4, mb: 4 }}
-                >
-                  <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell
-                            align="center"
-                            rowSpan={2}
-                            sx={{ borderRight: "1px solid #e5e5e5" }}
-                          >
-                            場地
-                          </TableCell>
-                          <TableCell
-                            align="center"
-                            rowSpan={2}
-                            sx={{ borderRight: "1px solid #e5e5e5" }}
-                          >
-                            時段
-                          </TableCell>
-                          {columnsDate.map((column) => (
-                            <TableCell
-                              key={column.format("YYYY-MM-DD")}
-                              align="center"
-                              sx={{ borderRight: "1px solid #e5e5e5" }}
-                            >
-                              {column.format("MM/DD")}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                        <TableRow>
-                          {columnsDate.map((column, index) => (
-                            <TableCell
-                              key={column.format("YYYY-MM-DD")}
-                              align="center"
-                              sx={{ borderRight: "1px solid #e5e5e5" }}
-                            >
-                              {columnsDay[index]}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        <TableRow>
-                          <TableCell
-                            rowSpan={3}
-                            align="center"
-                            sx={{ borderRight: "1px solid #e5e5e5" }}
-                          >
-                            {data.location}
-                          </TableCell>
-                          <TableCell
-                            align="center"
-                            sx={{
-                              borderRight: "1px solid #e5e5e5",
-                              background: "#938C8C",
-                              color: "#fff",
-                            }}
-                          >
-                            上午
-                          </TableCell>
-                          {data.morning.map((isChecked, index) => (
-                            <TableCell
-                              key={index}
-                              align="center"
-                              sx={{
-                                borderRight: "1px solid #e5e5e5",
-                                px: 0,
-                                py: 0,
-                              }}
-                            >
-                              <Checkbox
-                                checked={isChecked}
-                                sx={{
-                                  "& .MuiSvgIcon-root": {
-                                    fontSize: "30px",
-                                  },
-                                }}
-                              />
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                        <TableRow>
-                          <TableCell
-                            align="center"
-                            sx={{
-                              borderRight: "1px solid #e5e5e5",
-                              background: "#938C8C",
-                              color: "#fff",
-                            }}
-                          >
-                            下午
-                          </TableCell>
-                          {data.noon.map((isChecked, index) => (
-                            <TableCell
-                              key={index}
-                              align="center"
-                              sx={{
-                                borderRight: "1px solid #e5e5e5",
-                                px: 0,
-                                py: 0,
-                              }}
-                            >
-                              <Checkbox
-                                checked={isChecked}
-                                sx={{
-                                  "& .MuiSvgIcon-root": {
-                                    fontSize: "30px",
-                                  },
-                                }}
-                              />
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                        <TableRow>
-                          <TableCell
-                            align="center"
-                            sx={{
-                              borderRight: "1px solid #e5e5e5",
-                              background: "#938C8C",
-                              color: "#fff",
-                            }}
-                          >
-                            晚上
-                          </TableCell>
-                          {data.night.map((isChecked, index) => (
-                            <TableCell
-                              key={index}
-                              align="center"
-                              sx={{
-                                borderRight: "1px solid #e5e5e5",
-                                px: 0,
-                                py: 0,
-                              }}
-                            >
-                              <Checkbox
-                                checked={isChecked}
-                                sx={{
-                                  "& .MuiSvgIcon-root": {
-                                    fontSize: "30px",
-                                  },
-                                }}
-                              />
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </Box>
-              </Fragment>
-            ))}
-          </Box> */}
+          <Box>
+            <RentCalendar />
+          </Box>
         </Box>
       </Paper>
+
+      <ConfigProvider
+        modal={{
+          styles: modalStyles,
+        }}
+      >
+        <Modal
+          title="預約填寫單"
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          okText="確定"
+          cancelText="取消"
+          okButtonProps={{ style: { backgroundColor: "#938C8C" } }}
+        >
+          <Flex gap="middle">
+            <Select
+              style={{ width: "100%", marginTop: "10px", marginBottom: "10px" }}
+              placeholder="請選擇租借場地"
+              value={rentSpace}
+              allowClear
+              onChange={handleRentSpaceChange}
+              options={[
+                {
+                  value: "101館",
+                  label: "101館",
+                },
+                {
+                  value: "102館",
+                  label: "102館",
+                },
+                {
+                  value: "103館",
+                  label: "103館",
+                },
+              ]}
+            />
+            <Input
+              style={{ width: "100%", marginTop: "10px", marginBottom: "10px" }}
+              placeholder="請輸入租借事由"
+              allowClear
+              value={rentReason}
+              onChange={handleRentReasonChange}
+            />
+          </Flex>
+        </Modal>
+      </ConfigProvider>
     </>
   );
 };

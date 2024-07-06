@@ -1,12 +1,16 @@
-
 import Login from "./pages/login";
 import Register from "./pages/register";
 import Admin from "./pages/admin";
 import RoomInfo from "./pages/roomInfo";
 import RoomReserve from "./pages/roomReserve";
+import RentCalendar from "./components/rentCalendar";
 const routes = [
   {
     path: "/",
+    element: <RoomInfo />,
+  },
+  {
+    path: "/login",
     element: <Login />,
   },
   {
@@ -20,16 +24,14 @@ const routes = [
   {
     path: "/roomInfo",
     element: <RoomInfo />,
-    // children: [
-    //   {
-    //     path: "roomReserve",
-    //     element: <RoomReserve />,
-    //   },
-    // ],
   },
   {
     path: "/roomReserve",
     element: <RoomReserve />,
+  },
+  {
+    path: "/rentCalendar",
+    element: <RentCalendar />,
   },
   // {
   //   path: "*",
