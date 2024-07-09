@@ -54,6 +54,12 @@ const json = {
         afternoon: "",
         night: "",
       },
+      pageInfo: {
+        page: 0,
+        pageCount: 0,
+        pageSize: 0,
+        total: 0,
+      },
     },
   ],
   calendarList: [
@@ -112,6 +118,12 @@ const jsonVal = {
         morning: "1000",
         afternoon: "2000",
         night: "3000",
+      },
+      pageInfo: {
+        page: 1,
+        pageCount: 19095,
+        pageSize: 10,
+        total: 190950,
       },
     },
   ],
@@ -199,7 +211,9 @@ const Admin = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [tableData, setTableData] = useState(tableInfo);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNoCropImg, setIsNoCropImg] = useState(true);
   const [cropImgModalOpen, setCropImgModalOpen] = useState(false);
+
   const cropperRef = useRef(null);
   const [formValues, setFormValues] = useState({
     title: "",
@@ -210,6 +224,10 @@ const Admin = () => {
       night: "",
     },
   });
+
+  const handleBrowse = () => {
+    setCropImgModalOpen(true);
+  };
 
   const handleCrop = () => {
     const cropper = cropperRef.current?.cropper;
@@ -241,10 +259,11 @@ const Admin = () => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setSelectedImage(imageUrl);
+      setIsNoCropImg(false);
     }
   };
 
-  const handleButtonClick = () => {
+  const handleUploadImg = () => {
     document.getElementById("file-input").click();
   };
 
@@ -435,19 +454,36 @@ const Admin = () => {
         onClose={handleThumbnailClose}
         maxWidth="md"
         fullWidth
+        PaperProps={{
+          sx: {
+            maxHeight: "90vh", // 增加最大高度
+            overflow: "hidden", // 禁用滚动条
+          },
+        }}
       >
-        <DialogTitle>裁剪照片</DialogTitle>
-        <DialogContent>
-          {/* <Box
-            component="img"
-            src={selectedImage}
-            alt="查看的照片"
-            sx={{ width: "50%", height: "auto" }}
-          /> */}
+        <DialogTitle>上傳照片</DialogTitle>
+        <DialogContent
+          sx={{
+            overflow: "hidden", // 禁用滚动条
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          {isNoCropImg && (
+            <Box
+              component="div"
+              sx={{
+                minHeight: "250px",
+                width: "100%",
+                backgroundColor: "#f5f5f5",
+              }}
+            />
+          )}
           {selectedImage && (
             <Cropper
               src={selectedImage}
-              style={{ height: 400, width: "80%" }}
+              style={{ height: "60vh", width: "100%" }}
               // Cropper.js options
               initialAspectRatio={1}
               aspectRatio={1}
@@ -461,16 +497,36 @@ const Admin = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button
-            variant="outlined"
-            onClick={handleThumbnailClose}
-            color="secondary"
+          <Grid
+            container
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            sx={{ marginY: 2 }}
           >
-            取消
-          </Button>
-          <Button onClick={handleCrop} color="primary" variant="contained">
-            完成裁剪
-          </Button>
+            <Grid item sx={{ mb: 4 }}>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={handleUploadImg}
+              >
+                請選擇檔案
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                sx={{ mr: 2 }}
+                variant="outlined"
+                color="secondary"
+                onClick={handleThumbnailClose}
+              >
+                取消
+              </Button>
+              <Button onClick={handleCrop} color="primary" variant="contained">
+                儲存裁剪
+              </Button>
+            </Grid>
+          </Grid>
         </DialogActions>
       </Dialog>
       {/* 新增/編輯場地列表跳窗 */}
@@ -500,9 +556,9 @@ const Admin = () => {
                   <Button
                     size="small"
                     variant="contained"
-                    onClick={handleButtonClick}
+                    onClick={handleBrowse}
                   >
-                    上傳照片
+                    瀏覽
                   </Button>
                 </Grid>
               </Grid>
