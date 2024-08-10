@@ -13,7 +13,7 @@ class User(UserBase):
     is_active: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class RoomBase(BaseModel):
     name: str
@@ -27,7 +27,7 @@ class Room(RoomBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class BookingBase(BaseModel):
     start_date: datetime
@@ -42,4 +42,4 @@ class Booking(BookingBase):
     room_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
