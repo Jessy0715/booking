@@ -43,3 +43,11 @@ class Booking(BookingBase):
 
     class Config:
         from_attributes = True
+
+# Add these two classes
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: Optional[str] = None

@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from typing import List, Optional
 from jose import JWTError, jwt
 
-from . import models, schemas, crud, database
+from plugin import models, schemas, crud, database
 
 SECRET_KEY = "mysecretkey"
 ALGORITHM = "HS256"
