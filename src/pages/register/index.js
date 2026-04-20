@@ -10,6 +10,7 @@ import {
   InputAdornment,
   IconButton,
   FormHelperText,
+  Link,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import mainRoom from "@/assets/image/mainRoom.jpg";
@@ -46,28 +47,29 @@ const Register = () => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-  const handleRegister = () => {
-    if (!account) {
-      setAccountEmptyError(true);
-    }
-    if (!password) {
-      setPasswordEmptyError(true);
-    }
+  const [registerError, setRegisterError] = useState("");
 
-    // reset
-    // setAccount("");
-    // setPassword("");
-    // setEmptyError(false);
+  const handleRegister = async () => {
+    if (!account) { setAccountEmptyError(true); return; }
+    if (!password) { setPasswordEmptyError(true); return; }
+    if (error) return;
 
-    // 執行登入邏輯，可能涉及後端API調用等
-    if (error) {
-      // 密碼格式錯誤，顯示錯誤訊息
-      return;
+    try {
+      const res  = await fetch("http://localhost:3001/api/auth/register", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ account, password }),
+      });
+      const json = await res.json();
+
+      if (!json.success) {
+        setRegisterError(json.message || "註冊失敗");
+        return;
+      }
+      navigate("/login");
+    } catch {
+      setRegisterError("無法連線至伺服器");
     }
-    navigate("/login");
-
-    // 執行登入邏輯，例如：
-    // api.login(account, password).then((response) => { ... });
   };
   return (
     <>
@@ -172,6 +174,31 @@ const Register = () => {
                 <Button fullWidth variant="contained" onClick={handleRegister}>
                   註冊
                 </Button>
+              </Box>
+            </Grid>
+            {registerError && (
+              <Grid container direction="row" justifyContent="center">
+                <Box sx={{ m: 1, width: "70%", textAlign: "center" }}>
+                  <small style={{ color: "#d32f2f" }}>{registerError}</small>
+                </Box>
+              </Grid>
+            )}
+            {/* 返回登入連結 */}
+            <Grid container direction="row" justifyContent="center">
+              <Box sx={{ m: 1, width: "70%", textAlign: "center" }} component="span">
+                <small>
+                  已有帳號？{" "}
+                  <Link
+                    href="#"
+                    underline="hover"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate("/login");
+                    }}
+                  >
+                    點此登入
+                  </Link>
+                </small>
               </Box>
             </Grid>
           </Grid>

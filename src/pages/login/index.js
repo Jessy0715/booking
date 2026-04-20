@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Avatar,
   Paper,
   Grid,
   Box,
@@ -16,9 +15,12 @@ import {
   Snackbar,
   Alert,
   styled,
+  Tabs,
+  Tab
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import avatar1 from "@/assets/avatar/member1.jpg";
 
 const Login = () => {
@@ -30,22 +32,12 @@ const Login = () => {
   const [accountEmptyError, setAccountEmptyError] = useState(false);
   const [passwordEmptyError, setPasswordEmptyError] = useState(false);
   const [alert, setAlert] = useState(false);
+  const [loginRole, setLoginRole] = useState(0); // 0: 會員, 1: 管理員
 
-  const handleAdminGetIn = () => {
-    if (!account || !password) {
-      setAlert(true);
-      return;
-    }
-    if (!error) {
-      // 執行登入邏輯，例如：
-      // api.login(account, password).then((response) => { ... });
-
-      // 關閉警告訊息
-      setAlert(false);
-
-      // 轉到管理員頁面
-      navigate("/admin");
-    }
+  const handleRoleChange = (event, newValue) => {
+    setLoginRole(newValue);
+    setAccountEmptyError(false);
+    setPasswordEmptyError(false);
   };
   const handleAccountChange = (ev) => {
     const newAccount = ev.target.value;
@@ -71,30 +63,36 @@ const Login = () => {
   };
 
   // 登入
-  const handleLogin = () => {
-    if (!account) {
-      setAlert(true);
-      setAccountEmptyError(true);
-      return
-    }
-    if (!password) {
-      setAlert(true);
-      setPasswordEmptyError(true);
-      return
-    }
-    // reset
-    // setAccount("");
-    // setPassword("");
-    // setEmptyError(false);
+  const handleLogin = async () => {
+    if (!account) { setAlert(true); setAccountEmptyError(true); return; }
+    if (!password) { setAlert(true); setPasswordEmptyError(true); return; }
+    if (error) return;
 
-    // 執行登入邏輯，可能涉及後端API調用等
-    if (error) {
-      // 密碼格式錯誤，顯示錯誤訊息
-      return;
+    try {
+      const res  = await fetch("http://localhost:3001/api/auth/login", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ account, password }),
+      });
+      const json = await res.json();
+
+      if (!json.success) {
+        setAlert(true);
+        return;
+      }
+
+      // 儲存登入資訊
+      localStorage.setItem("user", JSON.stringify(json.data));
+
+      // 依角色跳轉（前端 Tab 僅作 UI，實際角色以 API 回傳為準）
+      if (json.data.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/roomInfo");
+      }
+    } catch {
+      setAlert(true);
     }
-    navigate("/roomInfo");
-    // 執行登入邏輯，例如：
-    // api.login(account, password).then((response) => { ... });
   };
   const CustomizedIcon = styled(AccountCircleOutlinedIcon)({
     fontSize: 80, // 設置圖標的大小
@@ -122,41 +120,31 @@ const Login = () => {
             pb: 2,
           }}
         >
-          <Box
-            component="span"
-            sx={{
-              position: "absolute",
-              left: 10,
-              top: 5,
-              color: "#938C8C",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
+          <Tabs
+            value={loginRole}
+            onChange={handleRoleChange}
+            variant="fullWidth"
+            textColor="primary"
+            indicatorColor="primary"
+            sx={{ mb: 2 }}
           >
-            {/* <Link href="/admin" underline="none">
+            <Tab label="一般會員" />
+            <Tab label="管理員" />
+          </Tabs>
 
-            </Link> */}
-            <small onClick={handleAdminGetIn}>管理員進入</small>
-          </Box>
           <Grid container direction="column" justifyContent="center">
             <Grid
               container
               direction="row"
               justifyContent="center"
-              sx={{ mt: 5, mb: 2 }}
+              sx={{ mt: 2, mb: 2 }}
             >
-              {/* <Avatar
-                alt="member"
-                src={avatar1}
-                sx={{
-                  width: { sm: 70, md: 128 },
-                  height: "auto",
-                  mt: 4,
-                  mb: 4,
-                }}
-              /> */}
               <Box sx={{ fontSize: 30 }}>
-                <CustomizedIcon className="bigIcon" color="primary" />
+                {loginRole === 0 ? (
+                  <CustomizedIcon className="bigIcon" color="primary" />
+                ) : (
+                  <AdminPanelSettingsIcon sx={{ fontSize: 80, color: "#9e9e9e" }} />
+                )}
               </Box>
             </Grid>
             <Grid container direction="row" justifyContent="center">
@@ -226,10 +214,18 @@ const Login = () => {
               </Box>
             </Grid>
             <Grid container direction="row" justifyContent="center">
-              <Box sx={{ m: 1, width: "70%" }} component="span">
+              <Box sx={{ m: 1, width: "70%", textAlign: "center" }} component="span">
                 <small>
-                  <Link href="/register" underline="none">
-                    立即註冊
+                  還沒有帳號？{" "}
+                  <Link
+                    href="#"
+                    underline="hover"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate("/register");
+                    }}
+                  >
+                    立刻註冊
                   </Link>
                 </small>
               </Box>
@@ -248,7 +244,7 @@ const Login = () => {
           severity="warning"
           sx={{ width: "100%" }}
         >
-          您的欄位尚未填寫
+          {!account || !password ? "您的欄位尚未填寫" : "帳號或密碼錯誤"}
         </Alert>
       </Snackbar>
     </>
