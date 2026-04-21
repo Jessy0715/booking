@@ -58,8 +58,19 @@ const Login = () => {
       const json = await res.json();
       if (!json.success) { setErrorMsg("帳號或密碼錯誤"); return; }
 
+      const isAdminTab  = loginRole === 1;
+      const isAdminRole = json.data.role === "admin";
+      if (isAdminTab && !isAdminRole) {
+        setErrorMsg("此帳號非管理員，請使用「一般會員」頁籤登入");
+        return;
+      }
+      if (!isAdminTab && isAdminRole) {
+        setErrorMsg("此帳號為管理員，請使用「管理員」頁籤登入");
+        return;
+      }
+
       localStorage.setItem("user", JSON.stringify(json.data));
-      navigate(json.data.role === "admin" ? "/admin" : "/roomInfo");
+      navigate(isAdminRole ? "/admin" : "/roomInfo");
     } catch {
       setErrorMsg("無法連線至伺服器");
     } finally {
