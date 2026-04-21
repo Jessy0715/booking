@@ -12,6 +12,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ScopedCssBaseline from "@mui/material/ScopedCssBaseline";
 
 import GlobalStyle from "./styles/GlobalStyle";
+import "./styles/tokens.css";
 
 const bookingTheme = createTheme({
   palette: {

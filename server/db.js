@@ -78,7 +78,7 @@ const allSeedRooms = [
     facilities: "閃燈組,柔光箱,背景架,造型椅",
   },
   {
-    img: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?auto=format&fit=crop&w=800&q=80",
+    img: "https://images.pexels.com/photos/2445781/pexels-photo-2445781.jpeg?auto=compress&cs=tinysrgb&w=800",
     title: "Studio B — 極簡白牆",
     desc: "二樓小棚，純白無縫背景紙，適合商品與人像拍攝。",
     morning: 1200, afternoon: 1800, night: 2500,
@@ -86,7 +86,7 @@ const allSeedRooms = [
     facilities: "無縫背景紙,反光板,補光燈",
   },
   {
-    img: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=800&q=80",
+    img: "https://images.pexels.com/photos/6447392/pexels-photo-6447392.jpeg?auto=compress&cs=tinysrgb&w=800",
     title: "Studio C — 工業風暗棚",
     desc: "地下一樓，磚牆 + 水泥地板，適合時尚與創意影片。",
     morning: 1500, afternoon: 2200, night: 3000,
@@ -102,7 +102,7 @@ const allSeedRooms = [
     facilities: "綠植造景,木質地板,環形燈,拍立得出租",
   },
   {
-    img: "https://images.unsplash.com/photo-1512486130939-2c4f79935e4f?auto=format&fit=crop&w=800&q=80",
+    img: "https://images.pexels.com/photos/5824519/pexels-photo-5824519.jpeg?auto=compress&cs=tinysrgb&w=800",
     title: "Studio E — 復古膠卷風",
     desc: "仿舊磁磚牆面與老件家具佈置，營造 90 年代底片相機氛圍。",
     morning: 1600, afternoon: 2400, night: 3200,
@@ -110,7 +110,7 @@ const allSeedRooms = [
     facilities: "老件家具,仿舊磁磚牆,立燈組,黑膠唱機道具",
   },
   {
-    img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80",
+    img: "https://images.pexels.com/photos/53265/pexels-photo-53265.jpeg?auto=compress&cs=tinysrgb&w=800",
     title: "Studio F — 全黑暗棚",
     desc: "頂牆地三面烤漆黑，適合商品燈光控制要求高的拍攝，零反光干擾。",
     morning: 2200, afternoon: 3200, night: 4500,
@@ -118,7 +118,7 @@ const allSeedRooms = [
     facilities: "三面黑牆,專業燈架,柔光傘,色紙組",
   },
   {
-    img: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80",
+    img: "https://images.pexels.com/photos/9513910/pexels-photo-9513910.jpeg?auto=compress&cs=tinysrgb&w=800",
     title: "Studio G — 戶外天台",
     desc: "頂樓露天天台，自然採光 + 城市天際線背景，限白天時段使用。",
     morning: 2500, afternoon: 3500, night: 0,
@@ -134,7 +134,7 @@ const allSeedRooms = [
     facilities: "淺木地板,米白背景,餐桌道具組,小型烤箱",
   },
   {
-    img: "https://images.unsplash.com/photo-1493863641943-9b68992a8d07?auto=format&fit=crop&w=800&q=80",
+    img: "https://images.pexels.com/photos/905419/pexels-photo-905419.jpeg?auto=compress&cs=tinysrgb&w=800",
     title: "Studio I — 玻璃溫室棚",
     desc: "半透明玻璃屋頂引入柔和自然光，四季皆宜，適合花藝與精品拍攝。",
     morning: 3000, afternoon: 4000, night: 5000,
@@ -176,12 +176,12 @@ if (roomCount.count < allSeedRooms.length) {
 
 // ─── 更新錯誤場地圖片（migration，只有圖片網址不同時才更新） ──────────────
 const photoFixes = [
-  { title: "Studio B — 極簡白牆",   img: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?auto=format&fit=crop&w=800&q=80" },
-  { title: "Studio C — 工業風暗棚", img: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=800&q=80" },
-  { title: "Studio E — 復古膠卷風", img: "https://images.unsplash.com/photo-1512486130939-2c4f79935e4f?auto=format&fit=crop&w=800&q=80" },
-  { title: "Studio F — 全黑暗棚",   img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80" },
-  { title: "Studio G — 戶外天台",   img: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80" },
-  { title: "Studio I — 玻璃溫室棚", img: "https://images.unsplash.com/photo-1493863641943-9b68992a8d07?auto=format&fit=crop&w=800&q=80" },
+  { title: "Studio B — 極簡白牆",   img: "https://images.pexels.com/photos/2445781/pexels-photo-2445781.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { title: "Studio C — 工業風暗棚", img: "https://images.pexels.com/photos/6447392/pexels-photo-6447392.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { title: "Studio E — 復古膠卷風", img: "https://images.pexels.com/photos/5824519/pexels-photo-5824519.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { title: "Studio F — 全黑暗棚",   img: "https://images.pexels.com/photos/53265/pexels-photo-53265.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { title: "Studio G — 戶外天台",   img: "https://images.pexels.com/photos/9513910/pexels-photo-9513910.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { title: "Studio I — 玻璃溫室棚", img: "https://images.pexels.com/photos/905419/pexels-photo-905419.jpeg?auto=compress&cs=tinysrgb&w=800" },
 ];
 const updatePhoto = db.prepare("UPDATE rooms SET room_img = ? WHERE title = ? AND room_img != ?");
 let fixedCount = 0;

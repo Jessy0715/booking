@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Calendar, Badge, Modal, ConfigProvider, Tag, Spin, Button, List } from "antd";
+import { Calendar, Modal, ConfigProvider, Tag, Spin, Button, List } from "antd";
 import dayjs from "dayjs";
 import "./index.css";
 
@@ -88,18 +88,13 @@ const RentCalendar = ({ onDateClick, refreshTrigger }) => {
       <ul className="events">
         {dayBookings.map((b) => (
           <li key={b.id} style={{ listStyleType: "none", margin: 0, padding: 0 }}>
-            <Badge
-              status={STATUS_BADGE[b.status] || "default"}
-              text={
-                <span
-                  onMouseDown={() => { eventClickedRef.current = true; }}
-                  onClick={() => setDetailModal({ open: true, event: b })}
-                  className="calendar-event-text"
-                >
-                  {TIME_SLOT_LABEL[b.timeSlot]} {b.roomTitle || ""}
-                </span>
-              }
-            />
+            <span
+              onMouseDown={() => { eventClickedRef.current = true; }}
+              onClick={() => setDetailModal({ open: true, event: b })}
+              className={`cal-chip cal-chip-${b.timeSlot}`}
+            >
+              {TIME_SLOT_LABEL[b.timeSlot]} {b.roomTitle || ""}
+            </span>
           </li>
         ))}
       </ul>

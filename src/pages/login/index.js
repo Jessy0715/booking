@@ -1,253 +1,238 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Paper,
-  Grid,
-  Box,
-  Button,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  InputAdornment,
-  FormHelperText,
-  IconButton,
-  Link,
-  Snackbar,
-  Alert,
-  styled,
-  Tabs,
-  Tab
-} from "@mui/material";
+import { IconButton, InputAdornment, OutlinedInput } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import avatar1 from "@/assets/avatar/member1.jpg";
+
+const API_URL = "http://localhost:3001";
+
+const fieldStyle = {
+  width: "100%",
+  "& .MuiOutlinedInput-root": {
+    borderRadius: "8px",
+    fontFamily: "var(--font-sans)",
+    fontSize: 14,
+    "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "var(--accent)" },
+  },
+};
 
 const Login = () => {
   const navigate = useNavigate();
-  const [account, setAccount] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(true);
-  const [error, setError] = useState(false);
-  const [accountEmptyError, setAccountEmptyError] = useState(false);
-  const [passwordEmptyError, setPasswordEmptyError] = useState(false);
-  const [alert, setAlert] = useState(false);
-  const [loginRole, setLoginRole] = useState(0); // 0: 會員, 1: 管理員
+  const [loginRole, setLoginRole]           = useState(0); // 0: 會員, 1: 管理員
+  const [account, setAccount]               = useState("");
+  const [password, setPassword]             = useState("");
+  const [showPassword, setShowPassword]     = useState(false);
+  const [pwdFormatError, setPwdFormatError] = useState(false);
+  const [errorMsg, setErrorMsg]             = useState("");
+  const [loading, setLoading]               = useState(false);
 
-  const handleRoleChange = (event, newValue) => {
-    setLoginRole(newValue);
-    setAccountEmptyError(false);
-    setPasswordEmptyError(false);
-  };
-  const handleAccountChange = (ev) => {
-    const newAccount = ev.target.value;
-    setAccount(newAccount);
-    setAccountEmptyError(false); // 清除帳號必填錯誤提示
-  };
-  const handlePwdChange = (ev) => {
-    const newPassword = ev.target.value;
-    setPassword(newPassword);
-
-    // 密碼格式驗證 (長度要8碼，要大小寫英文及數字)
-    const isValidPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(
-      newPassword
-    );
-    setError(!isValidPassword);
-    setPasswordEmptyError(false); // 清除密碼必填錯誤提示
-  };
-  const handleClickShowPassword = () =>
-    setShowPassword((showPassword) => !showPassword);
-
-  const handleMouseDownPassword = (ev) => {
-    ev.preventDefault();
+  const handleRoleChange = (role) => {
+    setLoginRole(role);
+    setErrorMsg("");
   };
 
-  // 登入
+  const handlePwdChange = (e) => {
+    const val = e.target.value;
+    setPassword(val);
+    if (val) {
+      const ok = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(val);
+      setPwdFormatError(!ok);
+    } else {
+      setPwdFormatError(false);
+    }
+    setErrorMsg("");
+  };
+
   const handleLogin = async () => {
-    if (!account) { setAlert(true); setAccountEmptyError(true); return; }
-    if (!password) { setAlert(true); setPasswordEmptyError(true); return; }
-    if (error) return;
+    if (!account) { setErrorMsg("請輸入帳號"); return; }
+    if (!password) { setErrorMsg("請輸入密碼"); return; }
+    if (pwdFormatError) { setErrorMsg("密碼格式有誤"); return; }
 
+    setLoading(true);
+    setErrorMsg("");
     try {
-      const res  = await fetch("http://localhost:3001/api/auth/login", {
-        method:  "POST",
+      const res  = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ account, password }),
+        body: JSON.stringify({ account, password }),
       });
       const json = await res.json();
+      if (!json.success) { setErrorMsg("帳號或密碼錯誤"); return; }
 
-      if (!json.success) {
-        setAlert(true);
-        return;
-      }
-
-      // 儲存登入資訊
       localStorage.setItem("user", JSON.stringify(json.data));
-
-      // 依角色跳轉（前端 Tab 僅作 UI，實際角色以 API 回傳為準）
-      if (json.data.role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/roomInfo");
-      }
+      navigate(json.data.role === "admin" ? "/admin" : "/roomInfo");
     } catch {
-      setAlert(true);
+      setErrorMsg("無法連線至伺服器");
+    } finally {
+      setLoading(false);
     }
   };
-  const CustomizedIcon = styled(AccountCircleOutlinedIcon)({
-    fontSize: 80, // 設置圖標的大小
-    // 這裡可以添加其他樣式屬性，例如 color、margin、padding 等
-  });
-  return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <Paper
-          component="main"
-          elevation={1}
-          sx={{
-            minWidth: "25vw",
-            maxWidth: "20vw",
-            marginX: "auto",
-            position: "relative",
-            pt: 2,
-            pb: 2,
-          }}
-        >
-          <Tabs
-            value={loginRole}
-            onChange={handleRoleChange}
-            variant="fullWidth"
-            textColor="primary"
-            indicatorColor="primary"
-            sx={{ mb: 2 }}
-          >
-            <Tab label="一般會員" />
-            <Tab label="管理員" />
-          </Tabs>
 
-          <Grid container direction="column" justifyContent="center">
-            <Grid
-              container
-              direction="row"
-              justifyContent="center"
-              sx={{ mt: 2, mb: 2 }}
+  return (
+    <div style={{
+      minHeight: "100vh",
+      background: "var(--bg)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 24,
+      fontFamily: "var(--font-sans)",
+    }}>
+      <div style={{
+        width: "100%",
+        maxWidth: 400,
+        background: "var(--surface)",
+        border: "1px solid var(--border-light)",
+        borderRadius: "var(--r)",
+        boxShadow: "var(--shadow-md)",
+        overflow: "hidden",
+        animation: "fadeUp 0.35s ease",
+      }}>
+
+        {/* 品牌區 */}
+        <div style={{
+          background: "linear-gradient(135deg, oklch(0.25 0.04 55), oklch(0.15 0.02 75))",
+          padding: "28px 40px",
+          position: "relative",
+          overflow: "hidden",
+        }}>
+          <svg aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
+            <circle cx="90%" cy="40%" r="60" fill="oklch(0.7 0.12 42 / 0.12)" />
+            <circle cx="70%" cy="90%" r="35" fill="oklch(0.55 0.1 145 / 0.09)" />
+          </svg>
+          <div style={{ position: "relative" }}>
+            <div style={{ fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)", marginBottom: 8 }}>
+              Photography Studio
+            </div>
+            <div style={{ fontFamily: "var(--font-serif)", fontSize: 18, fontWeight: 500, color: "white", letterSpacing: "0.04em" }}>
+              Lumino 自然光攝影棚
+            </div>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", marginTop: 4 }}>
+              場地借用管理系統
+            </div>
+          </div>
+        </div>
+
+        {/* 表單區 */}
+        <div style={{ padding: "32px 40px 36px" }}>
+
+          {/* 角色切換 */}
+          <div style={{
+            display: "flex", gap: 4, padding: 4,
+            background: "var(--bg)", borderRadius: 8, marginBottom: 28,
+          }}>
+            {["一般會員", "管理員"].map((label, i) => (
+              <button
+                key={i}
+                onClick={() => handleRoleChange(i)}
+                style={{
+                  flex: 1, padding: "7px 0", border: "none", borderRadius: 6,
+                  background: loginRole === i ? "var(--surface)" : "transparent",
+                  color: loginRole === i ? "var(--text)" : "var(--text-muted)",
+                  fontWeight: loginRole === i ? 500 : 400,
+                  cursor: "pointer",
+                  boxShadow: loginRole === i ? "var(--shadow-sm)" : "none",
+                  transition: "all 0.15s",
+                  fontFamily: "var(--font-sans)", fontSize: 13,
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {/* 帳號 */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>帳號</label>
+            <OutlinedInput
+              size="small"
+              fullWidth
+              placeholder="請輸入帳號"
+              value={account}
+              onChange={e => { setAccount(e.target.value); setErrorMsg(""); }}
+              onKeyDown={e => e.key === "Enter" && handleLogin()}
+              sx={fieldStyle}
+            />
+          </div>
+
+          {/* 密碼 */}
+          <div style={{ marginBottom: 8 }}>
+            <label style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>密碼</label>
+            <OutlinedInput
+              size="small"
+              fullWidth
+              placeholder="請輸入密碼"
+              value={password}
+              onChange={handlePwdChange}
+              onKeyDown={e => e.key === "Enter" && handleLogin()}
+              type={showPassword ? "text" : "password"}
+              error={pwdFormatError}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton size="small" onClick={() => setShowPassword(s => !s)} edge="end">
+                    {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              sx={fieldStyle}
+            />
+            {pwdFormatError && (
+              <div style={{ fontSize: 11, color: "oklch(0.5 0.15 15)", marginTop: 4 }}>
+                密碼需 8 碼以上，含大小寫英文及數字
+              </div>
+            )}
+          </div>
+
+          {/* 錯誤訊息 */}
+          {errorMsg && (
+            <div style={{
+              fontSize: 12, color: "oklch(0.5 0.15 15)",
+              background: "oklch(0.97 0.02 15)",
+              border: "1px solid oklch(0.88 0.06 15)",
+              borderRadius: 6, padding: "8px 12px",
+              marginBottom: 12, marginTop: 8,
+            }}>
+              {errorMsg}
+            </div>
+          )}
+
+          {/* 登入按鈕 */}
+          <button
+            onClick={handleLogin}
+            disabled={loading}
+            style={{
+              width: "100%",
+              padding: "10px 0",
+              marginTop: errorMsg ? 0 : 20,
+              background: loading ? "var(--border)" : "var(--accent)",
+              color: "white",
+              border: "none",
+              borderRadius: 8,
+              fontSize: 14,
+              fontWeight: 500,
+              cursor: loading ? "not-allowed" : "pointer",
+              fontFamily: "var(--font-sans)",
+              transition: "background 0.15s",
+            }}
+            onMouseEnter={e => { if (!loading) e.target.style.background = "var(--accent-hover)"; }}
+            onMouseLeave={e => { if (!loading) e.target.style.background = "var(--accent)"; }}
+          >
+            {loading ? "登入中…" : "登入"}
+          </button>
+
+          {/* 註冊連結 */}
+          <div style={{ textAlign: "center", marginTop: 20, fontSize: 12, color: "var(--text-muted)" }}>
+            還沒有帳號？{" "}
+            <span
+              onClick={() => navigate("/register")}
+              style={{ color: "var(--accent)", cursor: "pointer", textDecoration: "underline" }}
             >
-              <Box sx={{ fontSize: 30 }}>
-                {loginRole === 0 ? (
-                  <CustomizedIcon className="bigIcon" color="primary" />
-                ) : (
-                  <AdminPanelSettingsIcon sx={{ fontSize: 80, color: "#9e9e9e" }} />
-                )}
-              </Box>
-            </Grid>
-            <Grid container direction="row" justifyContent="center">
-              <FormControl
-                sx={{ m: 1, width: "70%", mb: 2 }}
-                variant="outlined"
-                size="small"
-                error={accountEmptyError}
-              >
-                <InputLabel
-                  htmlFor="account"
-                  sx={{
-                    backgroundColor: "white",
-                  }}
-                >
-                  帳號
-                </InputLabel>
-                <OutlinedInput
-                  id="account"
-                  value={account}
-                  onChange={handleAccountChange}
-                  placeholder="請輸入帳號"
-                ></OutlinedInput>
-                {accountEmptyError && <FormHelperText>必填欄位</FormHelperText>}
-              </FormControl>
-            </Grid>
-            <Grid container direction="row" justifyContent="center">
-              <FormControl
-                sx={{ m: 1, width: "70%", mb: 2 }}
-                variant="outlined"
-                size="small"
-                error={error || passwordEmptyError}
-              >
-                <InputLabel htmlFor="password">密碼</InputLabel>
-                <OutlinedInput
-                  id="password"
-                  placeholder="請輸入密碼"
-                  value={password}
-                  onChange={handlePwdChange}
-                  type={showPassword ? "password" : "text"}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  label="Password"
-                />
-                {(error || passwordEmptyError) && (
-                  <FormHelperText>
-                    {passwordEmptyError ? "必填欄位" : "您輸入的密碼格式有錯誤"}
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Grid>
-            <Grid container direction="row" justifyContent="center">
-              <Box sx={{ m: 1, width: "70%" }}>
-                <Button fullWidth variant="contained" onClick={handleLogin}>
-                  登入
-                </Button>
-              </Box>
-            </Grid>
-            <Grid container direction="row" justifyContent="center">
-              <Box sx={{ m: 1, width: "70%", textAlign: "center" }} component="span">
-                <small>
-                  還沒有帳號？{" "}
-                  <Link
-                    href="#"
-                    underline="hover"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigate("/register");
-                    }}
-                  >
-                    立刻註冊
-                  </Link>
-                </small>
-              </Box>
-            </Grid>
-          </Grid>
-        </Paper>
-      </Box>
-      <Snackbar
-        open={alert}
-        autoHideDuration={2000}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        onClose={() => setAlert(false)}
-      >
-        <Alert
-          onClose={() => setAlert(false)}
-          severity="warning"
-          sx={{ width: "100%" }}
-        >
-          {!account || !password ? "您的欄位尚未填寫" : "帳號或密碼錯誤"}
-        </Alert>
-      </Snackbar>
-    </>
+              立刻註冊
+            </span>
+          </div>
+
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -1,34 +1,21 @@
 import { useState, useEffect } from "react";
-import {
-  Paper,
-  Grid,
-  Typography,
-  Box,
-  Button,
-  Pagination,
-  PaginationItem,
-  Chip,
-  Skeleton,
-  Alert,
-} from "@mui/material";
-import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
-import SquareFootIcon from "@mui/icons-material/SquareFoot";
-import GroupIcon from "@mui/icons-material/Group";
-import { useStyles } from "../../../bookingStyle";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import RoomTable from "./RoomTable";
+import { Skeleton, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://localhost:3001";
+const API_URL  = "http://localhost:3001";
 const PAGE_SIZE = 5;
+
+const SLOTS = [
+  { key: "morning",   label: "上午", range: "09:00–12:00" },
+  { key: "afternoon", label: "下午", range: "13:00–17:00" },
+  { key: "night",     label: "晚上", range: "18:00–22:00" },
+];
 
 const Room = () => {
   const navigate = useNavigate();
-  const classes = useStyles();
-
-  const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [rooms, setRooms]           = useState([]);
+  const [loading, setLoading]       = useState(true);
+  const [error, setError]           = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -37,201 +24,215 @@ const Room = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(
-          `${API_URL}/api/rooms?page=${currentPage}&pageSize=${PAGE_SIZE}`
-        );
+        const res  = await fetch(`${API_URL}/api/rooms?page=${currentPage}&pageSize=${PAGE_SIZE}`);
         const json = await res.json();
-        if (!json.success) throw new Error("取得場地失敗");
+        if (!json.success) throw new Error();
         setRooms(json.data);
         setTotalPages(json.pagination.totalPages);
-      } catch (err) {
+      } catch {
         setError("無法連線至伺服器，請確認後端是否啟動。");
       } finally {
         setLoading(false);
       }
     };
-
     fetchRooms();
   }, [currentPage]);
 
-  const handlePageChange = (_ev, page) => {
+  const handlePageChange = (page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const renderPageItem = (item) => (
-    <PaginationItem
-      component="div"
-      style={{ backgroundColor: item.page === currentPage ? "#938C8C" : "#fff" }}
-      {...item}
-    />
+  // ── 載入骨架 ────────────────────────────────────────────────────
+  if (loading) return (
+    <div style={{ maxWidth: 880, margin: "0 auto", padding: "32px 24px" }}>
+      {[1, 2, 3].map((i) => (
+        <div key={i} style={{
+          background: "var(--surface)", border: "1px solid var(--border-light)",
+          borderRadius: "var(--r)", padding: 20, marginBottom: 16,
+          display: "flex", gap: 24,
+        }}>
+          <Skeleton variant="rectangular" width={200} height={148} sx={{ borderRadius: 1, flexShrink: 0 }} />
+          <div style={{ flex: 1 }}>
+            <Skeleton width="40%" height={24} />
+            <Skeleton width="80%" height={16} sx={{ mt: 1 }} />
+            <Skeleton variant="rectangular" height={72} sx={{ mt: 2, borderRadius: 1 }} />
+          </div>
+        </div>
+      ))}
+    </div>
   );
 
-  // ─── 載入中骨架屏 ───────────────────────────────────────────────
-  if (loading) {
-    return (
-      <Paper component="main" elevation={0} sx={{ backgroundColor: "#E5E5E5", p: 3 }}>
-        {[1, 2, 3].map((i) => (
-          <Paper key={i} elevation={0} sx={{ mb: 3, p: 3, minWidth: "80vw", marginX: "auto" }}>
-            <Grid container spacing={2}>
-              <Grid item xs={4}>
-                <Skeleton variant="rectangular" height={200} />
-              </Grid>
-              <Grid item xs={8}>
-                <Skeleton variant="text" width="40%" height={32} />
-                <Skeleton variant="text" width="80%" />
-                <Skeleton variant="rectangular" height={80} sx={{ mt: 2 }} />
-              </Grid>
-            </Grid>
-          </Paper>
-        ))}
-      </Paper>
-    );
-  }
-
-  // ─── 錯誤提示 ───────────────────────────────────────────────────
-  if (error) {
-    return (
-      <Box sx={{ p: 4 }}>
-        <Alert severity="error">{error}</Alert>
-      </Box>
-    );
-  }
+  if (error) return (
+    <div style={{ padding: "40px 24px" }}>
+      <Alert severity="error">{error}</Alert>
+    </div>
+  );
 
   return (
-    <>
-      <Paper component="main" elevation={0} sx={{ backgroundColor: "#E5E5E5" }}>
-        <Grid container direction="column" justifyContent="flex-start">
-          {rooms.map((room) => {
-            const { id, roomImg, title, desc, price, floor, area, capacity, facilities } = room;
-            return (
-              <Paper
-                key={id}
-                elevation={0}
-                component="section"
-                square
-                sx={{
-                  mb: 5,
-                  minWidth: "80vw",
-                  marginX: "auto",
-                  backgroundColor: "#fff",
-                  p: 3,
-                }}
-              >
-                <Grid container direction="row" wrap="nowrap">
-                  {/* ─── 場地圖片 ─────────────────────────────── */}
-                  <Grid item xs={4}>
-                    <Box
-                      sx={{
-                        backgroundImage: `url(${roomImg})`,
-                        backgroundRepeat: "no-repeat",
-                        backgroundPosition: "center",
-                        backgroundSize: "cover",
-                        width: "95%",
-                        height: "200px",
-                        borderRadius: 1,
-                      }}
-                    />
-                  </Grid>
+    <div style={{ maxWidth: 880, margin: "0 auto", padding: "32px 24px 64px" }}>
 
-                  {/* ─── 場地資訊 ─────────────────────────────── */}
-                  <Grid item xs={8}>
-                    <Grid
-                      container
-                      direction="row"
-                      justifyContent="space-between"
-                      alignItems="flex-start"
-                    >
-                      <Box sx={{ flex: 1 }}>
-                        {/* 標題 */}
-                        <Grid container alignItems="center">
-                          <ArrowRightIcon fontSize="large" color="secondary" />
-                          <Typography variant="subtitle2" fontWeight="bold">
-                            {title}
-                          </Typography>
-                        </Grid>
+      {/* 標題 */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24 }}>
+        <div style={{ width: 3, height: 18, background: "var(--accent)", borderRadius: 2 }} />
+        <span style={{
+          fontFamily: "var(--font-serif)", fontSize: 17, fontWeight: 500,
+          letterSpacing: "0.04em", color: "var(--text)",
+        }}>
+          精選空間
+        </span>
+      </div>
 
-                        {/* 描述 */}
-                        <Box sx={{ fontSize: "14px", color: "#555" }} className={classes.pd}>
-                          {desc}
-                        </Box>
+      {/* 卡片列表 */}
+      {rooms.map((room, idx) => {
+        const { id, roomImg, title, desc, price, floor, area, capacity, facilities } = room;
+        return (
+          <div
+            key={id}
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--border-light)",
+              borderRadius: "var(--r)",
+              padding: 20,
+              marginBottom: 16,
+              display: "flex",
+              gap: 24,
+              transition: "border-color 0.15s, box-shadow 0.15s",
+              animation: "fadeUp 0.4s ease both",
+              animationDelay: `${idx * 0.07}s`,
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = "var(--border)";
+              e.currentTarget.style.boxShadow   = "var(--shadow-md)";
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = "var(--border-light)";
+              e.currentTarget.style.boxShadow   = "none";
+            }}
+          >
+            {/* 圖片 */}
+            <div style={{
+              width: 200, height: 148, flexShrink: 0,
+              borderRadius: 8,
+              backgroundImage: `url(${roomImg})`,
+              backgroundSize: "cover", backgroundPosition: "center",
+              backgroundColor: "var(--bg)",
+            }} />
 
-                        {/* 空間資訊 */}
-                        <Grid container spacing={2} sx={{ mt: 1, mb: 1 }} alignItems="center">
-                          <Grid item>
-                            <Grid container alignItems="center" spacing={0.5}>
-                              <Grid item><MeetingRoomIcon fontSize="small" sx={{ color: "#8b7355" }} /></Grid>
-                              <Grid item><Typography variant="caption" color="text.secondary">樓層：{floor}</Typography></Grid>
-                            </Grid>
-                          </Grid>
-                          <Grid item>
-                            <Grid container alignItems="center" spacing={0.5}>
-                              <Grid item><SquareFootIcon fontSize="small" sx={{ color: "#8b7355" }} /></Grid>
-                              <Grid item><Typography variant="caption" color="text.secondary">坪數：{area} 坪</Typography></Grid>
-                            </Grid>
-                          </Grid>
-                          <Grid item>
-                            <Grid container alignItems="center" spacing={0.5}>
-                              <Grid item><GroupIcon fontSize="small" sx={{ color: "#8b7355" }} /></Grid>
-                              <Grid item><Typography variant="caption" color="text.secondary">最多 {capacity} 人</Typography></Grid>
-                            </Grid>
-                          </Grid>
-                        </Grid>
+            {/* 資訊 */}
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8, minWidth: 0 }}>
 
-                        {/* 設備 Chips */}
-                        {facilities.length > 0 && (
-                          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.8, mb: 1.5 }}>
-                            {facilities.map((f) => (
-                              <Chip
-                                key={f}
-                                label={f}
-                                size="small"
-                                sx={{ backgroundColor: "#f5f3ef", color: "#5a4a3a", fontSize: "12px" }}
-                              />
-                            ))}
-                          </Box>
-                        )}
-                      </Box>
+              {/* 標題列 */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+                  <div style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent)", flexShrink: 0 }} />
+                  <span style={{
+                    fontFamily: "var(--font-serif)", fontSize: 15, fontWeight: 500,
+                    letterSpacing: "0.02em", color: "var(--text)",
+                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                  }}>
+                    {title}
+                  </span>
+                </div>
+                <button
+                  className="room-book-btn"
+                  onClick={() => navigate("/roomReserve", { state: { roomId: id } })}
+                >
+                  前往預約
+                </button>
+              </div>
 
-                      {/* 預約按鈕 */}
-                      <Box sx={{ ml: 2, flexShrink: 0 }}>
-                        <Button
-                          variant="outlined"
-                          onClick={() => navigate("/roomReserve", { state: { roomId: id } })}
-                        >
-                          前往預約
-                        </Button>
-                      </Box>
-                    </Grid>
+              {/* 說明 */}
+              <p style={{
+                fontSize: 12.5, color: "var(--text-secondary)",
+                lineHeight: 1.6, marginLeft: 14,
+              }}>
+                {desc}
+              </p>
 
-                    {/* 費用表格 */}
-                    <Box>
-                      <RoomTable id={id} price={price} />
-                    </Box>
-                  </Grid>
-                </Grid>
-              </Paper>
-            );
-          })}
+              {/* 規格列 */}
+              <div style={{ display: "flex", gap: 16, marginLeft: 14, flexWrap: "wrap" }}>
+                {[
+                  { label: "坪數", value: `${area} 坪` },
+                  { label: "樓層", value: floor },
+                  { label: "容量", value: `${capacity} 人` },
+                ].map(({ label, value }) => (
+                  <div key={label} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <span style={{ fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.02em" }}>{label}</span>
+                    <span style={{ fontSize: 12.5, fontWeight: 500, color: "var(--text-secondary)" }}>{value}</span>
+                  </div>
+                ))}
+              </div>
 
-          {/* ─── 分頁 ─────────────────────────────────────────── */}
-          <Box sx={{ minWidth: "80vw", marginX: "auto", mb: 4 }}>
-            <Grid container direction="row" justifyContent="flex-end">
-              <Pagination
-                count={totalPages}
-                variant="string"
-                shape="rounded"
-                size="large"
-                page={currentPage}
-                renderItem={renderPageItem}
-                onChange={handlePageChange}
-              />
-            </Grid>
-          </Box>
-        </Grid>
-      </Paper>
-      <div style={{ height: "100px" }} />
-    </>
+              {/* 設備標籤 */}
+              {facilities.length > 0 && (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginLeft: 14 }}>
+                  {facilities.map((f) => (
+                    <span key={f} style={{
+                      fontSize: 11, color: "var(--text-muted)",
+                      border: "1px solid var(--border)", background: "var(--bg)",
+                      borderRadius: 20, padding: "2px 10px", letterSpacing: "0.02em",
+                    }}>
+                      {f}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* 價格 Grid */}
+              <div style={{
+                display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
+                border: "1px solid var(--border-light)",
+                borderRadius: 8, overflow: "hidden", marginTop: 4,
+              }}>
+                {SLOTS.map((slot, i) => (
+                  <div key={slot.key} style={{
+                    padding: "10px 14px",
+                    borderLeft: i > 0 ? "1px solid var(--border-light)" : "none",
+                    background: slot.key === "afternoon" ? "var(--accent-light)" : "transparent",
+                  }}>
+                    <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 4 }}>
+                      {slot.label}　{slot.range}
+                    </div>
+                    <div style={{ fontSize: 13.5, fontWeight: 500, color: "var(--text)" }}>
+                      NT$ {price[slot.key] ?? "—"}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+          </div>
+        );
+      })}
+
+      {/* 分頁 */}
+      {totalPages > 1 && (
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 6, marginTop: 24 }}>
+          <button
+            className="pg-btn"
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          >‹</button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              className={`pg-btn${page === currentPage ? " active" : ""}`}
+              onClick={() => handlePageChange(page)}
+            >
+              {page}
+            </button>
+          ))}
+
+          <button
+            className="pg-btn"
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          >›</button>
+        </div>
+      )}
+    </div>
   );
 };
 
