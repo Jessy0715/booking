@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 
-const API_URL = "http://localhost:3001";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3001";
 
 const TIME_SLOT_LABEL = { morning: "上午 09:00–12:00", afternoon: "下午 13:00–17:00", night: "晚上 18:00–21:00" };
 const TIME_SLOT_SHORT = { morning: "上午", afternoon: "下午", night: "晚上" };

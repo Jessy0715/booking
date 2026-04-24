@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import { Search as SearchIcon } from "@mui/icons-material";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 
-const API_URL = "http://localhost:3001";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3001";
 
 const TIME_SLOT_LABEL = { morning: "上午", afternoon: "下午", night: "晚上" };
 

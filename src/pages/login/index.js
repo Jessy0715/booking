@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { IconButton, InputAdornment, OutlinedInput } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const API_URL = "http://localhost:3001";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3001";
 
 const fieldStyle = {
   width: "100%",

@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 
-const API_URL = "http://localhost:3001";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3001";
 
 const TIME_SLOT_OPTIONS = [
   { value: "morning",   label: "上午 09:00 - 12:00" },

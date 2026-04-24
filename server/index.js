@@ -5,7 +5,8 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // ─── Middleware ───────────────────────────────────────────────────
-app.use(cors({ origin: "http://localhost:3000" })); // 允許前端 React dev server
+const allowedOrigin = process.env.CORS_ORIGIN || "http://localhost:3000";
+app.use(cors({ origin: allowedOrigin }));
 app.use(express.json());
 
 // ─── Routes ──────────────────────────────────────────────────────

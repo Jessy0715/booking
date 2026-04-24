@@ -28,3 +28,6 @@ yarn-error.log*
 /server/*.db
 /server/*.db-shm
 /server/*.db-wal
+
+# specs / internal docs
+/src/specs

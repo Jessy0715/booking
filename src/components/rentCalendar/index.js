@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import "./index.css";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 
-const API_URL = "http://localhost:3001";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3001";
 
 const TIME_SLOT_LABEL = {
   morning:   "上午",
