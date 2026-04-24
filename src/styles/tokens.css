@@ -37,6 +37,29 @@ body {
   color: var(--text);
 }
 
+/* ── Mobile overrides ────────────────────── */
+@media (max-width: 767px) {
+  /* Hero 區縮小 */
+  section[style*="height: 260"] { height: 180px !important; }
+  section[style*="height: 200"] { height: 160px !important; }
+
+  /* Hero 文字縮小 */
+  section h1 { font-size: 20px !important; }
+
+  /* Antd Calendar 縮排 */
+  .ant-picker-calendar { padding: 8px !important; }
+  .ant-picker-calendar-date { min-height: 56px !important; }
+  .ant-picker-calendar-date-value { font-size: 11px !important; }
+  .cal-chip { font-size: 9px !important; max-width: 72px !important; }
+
+  /* Antd Modal 全寬 */
+  .ant-modal { max-width: calc(100vw - 24px) !important; margin: 12px auto !important; }
+  .ant-modal-content { border-radius: 10px !important; }
+
+  /* 避免橫向溢出 */
+  body { overflow-x: hidden; }
+}
+
 /* ── Header 登出按鈕 ─────────────────────── */
 .nav-logout-btn {
   border: 1px solid var(--border);

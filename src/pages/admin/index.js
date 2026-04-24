@@ -7,6 +7,7 @@ import {
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Search as SearchIcon } from "@mui/icons-material";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 const API_URL = "http://localhost:3001";
 
@@ -48,6 +49,7 @@ const StatusBadge = ({ status }) => {
 };
 
 const Admin = () => {
+  const { isMobile } = useBreakpoint();
   const [activeTab, setActiveTab]     = useState(0);
   const [filter, setFilter]           = useState("");
   const [rooms, setRooms]             = useState([]);
@@ -209,7 +211,7 @@ const Admin = () => {
       </section>
 
       {/* ── Main ──────────────────────────────────────────────────── */}
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "36px 40px", fontFamily: "var(--font-sans)" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "20px 16px" : "36px 40px", fontFamily: "var(--font-sans)" }}>
 
         {/* ── Tab 切換器 ──────────────────────────────────────────── */}
         <div style={{
@@ -241,9 +243,9 @@ const Admin = () => {
         {activeTab === 0 && (
           <>
             {/* Toolbar */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+            <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: "space-between", alignItems: isMobile ? "stretch" : "center", gap: isMobile ? 10 : 0, marginBottom: 24 }}>
               <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                <div style={{ position: "relative" }}>
+                <div style={{ position: "relative", flex: isMobile ? 1 : "none" }}>
                   <SearchIcon style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)", fontSize: 16 }} />
                   <input
                     placeholder="搜尋場地名稱"
@@ -254,7 +256,8 @@ const Admin = () => {
                       paddingLeft: 34, paddingRight: 12, height: 34,
                       border: "1px solid var(--border)", borderRadius: 7,
                       fontSize: 13, fontFamily: "var(--font-sans)",
-                      background: "var(--surface)", color: "var(--text)", outline: "none", width: 220,
+                      background: "var(--surface)", color: "var(--text)", outline: "none",
+                      width: isMobile ? "100%" : 220,
                     }}
                   />
                 </div>
@@ -318,12 +321,14 @@ const Admin = () => {
                     />
                   </div>
 
-                  {/* Thumbnail */}
-                  <div style={{ width: 160, height: 116, borderRadius: 8, overflow: "hidden", flexShrink: 0, background: "var(--bg)" }}>
-                    {room.roomImg && (
-                      <img src={room.roomImg} alt={room.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    )}
-                  </div>
+                  {/* Thumbnail - hidden on mobile */}
+                  {!isMobile && (
+                    <div style={{ width: 160, height: 116, borderRadius: 8, overflow: "hidden", flexShrink: 0, background: "var(--bg)" }}>
+                      {room.roomImg && (
+                        <img src={room.roomImg} alt={room.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      )}
+                    </div>
+                  )}
 
                   {/* Info */}
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -411,7 +416,7 @@ const Admin = () => {
             </div>
 
             {/* Table */}
-            <div style={{ background: "var(--surface)", border: "1px solid var(--border-light)", borderRadius: "var(--r)", overflow: "hidden" }}>
+            <div style={{ background: "var(--surface)", border: "1px solid var(--border-light)", borderRadius: "var(--r)", overflow: isMobile ? "auto" : "hidden" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "var(--font-sans)", fontSize: 13 }}>
                 <thead>
                   <tr style={{ borderBottom: "1.5px solid var(--border)" }}>

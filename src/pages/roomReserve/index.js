@@ -8,6 +8,7 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 const API_URL = "http://localhost:3001";
 
@@ -17,6 +18,14 @@ const TIME_SLOT_OPTIONS = [
   { value: "night",     label: "晚上 18:00 - 22:00" },
 ];
 
+const SLOT_STATUS_CONFIG = {
+  available: { label: "可預約", color: "var(--green)",           bg: "var(--green-bg)",          border: "var(--green)" },
+  pending:   { label: "申請中", color: "oklch(0.52 0.12 55)",    bg: "oklch(0.96 0.04 75)",      border: "oklch(0.80 0.08 55)" },
+  approved:  { label: "已核准", color: "oklch(0.42 0.14 15)",    bg: "oklch(0.97 0.03 15)",      border: "oklch(0.76 0.1 15)" },
+};
+
+const SLOT_NAMES = { morning: "上午", afternoon: "下午", night: "晚上" };
+
 const modalStyles = {
   header: { borderLeft: "5px solid var(--accent)", borderRadius: 0, paddingInlineStart: 5 },
 };
@@ -25,6 +34,7 @@ const RoomReserve = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [form] = Form.useForm();
+  const { isMobile } = useBreakpoint();
   const isAdmin = JSON.parse(localStorage.getItem("user") || "{}").role === "admin";
 
   const [isModalOpen, setIsModalOpen]       = useState(false);
@@ -87,7 +97,8 @@ const RoomReserve = () => {
   const handleDateChange  = (v) => { setSelectedDate(v ? v.format("YYYY-MM-DD") : null); form.setFieldValue("timeSlot", undefined); };
 
   const handleDateClick = (dateStr) => {
-    form.setFieldsValue({ date: dayjs(dateStr) });
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    form.setFieldsValue({ date: dayjs(dateStr), userName: user.account || "" });
     setSelectedDate(dateStr);
     const cur = form.getFieldValue("roomId");
     if (cur) setSelectedRoomId(cur);
@@ -96,7 +107,9 @@ const RoomReserve = () => {
   };
 
   const openModal = () => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
     form.resetFields();
+    form.setFieldsValue({ userName: user.account || "" });
     setSelectedRoomId(null);
     setSelectedDate(null);
     setIsModalOpen(true);
@@ -106,8 +119,10 @@ const RoomReserve = () => {
     try {
       const values = await form.validateFields();
       setSubmitting(true);
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
       const payload = {
         roomId:   values.roomId,
+        userId:   user.id || null,
         userName: values.userName,
         date:     values.date.format("YYYY-MM-DD"),
         timeSlot: values.timeSlot,
@@ -136,7 +151,7 @@ const RoomReserve = () => {
       <Header />
 
       <div style={{ background: "var(--bg)", minHeight: "100vh", paddingBottom: 80 }}>
-        <div style={{ maxWidth: "880px", margin: "0 auto", padding: "24px 24px 0" }}>
+        <div style={{ maxWidth: "880px", margin: "0 auto", padding: isMobile ? "16px 12px 0" : "24px 24px 0" }}>
 
           {/* 返回 */}
           <div style={{ display: "flex", alignItems: "center", marginBottom: 4 }}>
@@ -153,22 +168,26 @@ const RoomReserve = () => {
 
           {/* 標題列 */}
           <div style={{
-            display: "flex", alignItems: "center",
-            justifyContent: "space-between", marginBottom: 20,
+            display: "flex",
+            flexDirection: isMobile ? "column" : "row",
+            alignItems: isMobile ? "flex-start" : "center",
+            justifyContent: "space-between",
+            gap: isMobile ? 12 : 0,
+            marginBottom: 20,
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <div style={{ width: 3, height: 18, background: "var(--accent)", borderRadius: 2 }} />
               <span style={{
-                fontFamily: "var(--font-serif)", fontSize: 17, fontWeight: 500,
+                fontFamily: "var(--font-serif)", fontSize: isMobile ? 15 : 17, fontWeight: 500,
                 letterSpacing: "0.04em", color: "var(--text)",
               }}>
                 租借場地時段表
               </span>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              {/* 圖例（僅後台） */}
-              {isAdmin && (
+            <div style={{ display: "flex", alignItems: "center", gap: 12, alignSelf: isMobile ? "stretch" : "auto" }}>
+              {/* 圖例（僅後台，手機隱藏） */}
+              {isAdmin && !isMobile && (
                 <div style={{ display: "flex", gap: 14, fontSize: 12, color: "var(--text-muted)" }}>
                   <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
                     <span style={{ width: 8, height: 8, borderRadius: 2, background: "var(--accent)", display: "inline-block" }} />
@@ -187,7 +206,7 @@ const RoomReserve = () => {
               <button
                 className="room-book-btn"
                 onClick={openModal}
-                style={{ padding: "8px 20px" }}
+                style={{ padding: "8px 20px", flex: isMobile ? 1 : "none" }}
               >
                 立即預約
               </button>
@@ -243,15 +262,64 @@ const RoomReserve = () => {
               />
             </Form.Item>
 
+            {/* ── 時段可用狀態面板 ───────────────────────────────── */}
+            {selectedRoomId && selectedDate && (
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 8, fontWeight: 500 }}>
+                  時段可用狀態
+                </div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {["morning", "afternoon", "night"].map((slot) => {
+                    const status = slotStatus[slot] || "available";
+                    const cfg    = SLOT_STATUS_CONFIG[status];
+                    const avail  = status === "available";
+                    return (
+                      <div
+                        key={slot}
+                        onClick={() => {
+                          if (avail) form.setFieldValue("timeSlot", slot);
+                        }}
+                        style={{
+                          flex: 1, padding: "10px 8px", borderRadius: 8, textAlign: "center",
+                          background: cfg.bg, border: `1px solid ${cfg.border}`,
+                          cursor: avail ? "pointer" : "not-allowed",
+                          transition: "opacity 0.15s, box-shadow 0.15s",
+                          opacity: avail ? 1 : 0.7,
+                        }}
+                        onMouseEnter={(e) => { if (avail) e.currentTarget.style.boxShadow = "var(--shadow-sm)"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "none"; }}
+                      >
+                        <div style={{ fontSize: 12, fontWeight: 500, color: cfg.color, marginBottom: 3 }}>
+                          {SLOT_NAMES[slot]}
+                        </div>
+                        <div style={{ fontSize: 10, color: cfg.color }}>
+                          {cfg.label}
+                        </div>
+                        {avail && (
+                          <div style={{ fontSize: 9, color: cfg.color, opacity: 0.7, marginTop: 2 }}>
+                            點擊選取
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             <Form.Item label="租借時段" name="timeSlot" rules={[{ required: true, message: "請選擇時段" }]}>
               <Select
                 placeholder={!selectedRoomId || !selectedDate ? "請先選擇場地與日期" : "請選擇時段"}
                 options={TIME_SLOT_OPTIONS.map(opt => {
                   const status = slotStatus[opt.value];
                   const taken  = status === "pending" || status === "approved";
-                  const suffix = status === "approved" ? " （已核准，無法預約）"
-                               : status === "pending"  ? " （申請中，無法預約）" : "";
-                  return { value: opt.value, label: `${opt.label}${suffix}`, disabled: taken };
+                  const suffix = status === "approved" ? "（已核准）"
+                               : status === "pending"  ? "（申請中）" : "";
+                  return {
+                    value: opt.value,
+                    label: suffix ? `${opt.label}  ${suffix}` : opt.label,
+                    disabled: taken,
+                  };
                 })}
               />
             </Form.Item>

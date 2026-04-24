@@ -61,3 +61,39 @@
 .cal-chip-morning   { background: var(--accent-light); color: var(--accent); }
 .cal-chip-afternoon { background: var(--blue-bg);      color: var(--blue); }
 .cal-chip-night     { background: var(--green-bg);     color: var(--green); }
+
+/* ── 行動版色點 ─────────────────────────────────────────── */
+.cal-dots {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+  padding-top: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.cal-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+  transition: transform 0.1s;
+}
+.cal-dot:hover { transform: scale(1.4); }
+.cal-dot-more {
+  font-size: 8px;
+  color: var(--text-muted);
+  line-height: 1;
+  font-family: var(--font-sans);
+}
+
+/* ── Mobile 月曆格子補強 ─────────────────────────────────── */
+@media (max-width: 767px) {
+  .ant-picker-calendar-date-content {
+    min-height: 20px !important;
+    overflow: visible !important;
+  }
+  .ant-picker-calendar-date {
+    padding: 4px 2px !important;
+  }
+}

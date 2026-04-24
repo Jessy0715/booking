@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Skeleton, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 const API_URL  = "http://localhost:3001";
 const PAGE_SIZE = 5;
@@ -11,24 +12,43 @@ const SLOTS = [
   { key: "night",     label: "晚上", range: "18:00–22:00" },
 ];
 
+const selectStyle = {
+  height: 34, border: "1px solid var(--border)", borderRadius: 7,
+  padding: "0 10px", fontSize: 13, fontFamily: "var(--font-sans)",
+  background: "var(--surface)", color: "var(--text)", outline: "none",
+  cursor: "pointer",
+};
+
+const getMinPrice = (room) => {
+  const prices = [room.price.morning, room.price.afternoon, room.price.night]
+    .map(Number)
+    .filter((p) => p > 0);
+  return prices.length ? Math.min(...prices) : 0;
+};
+
 const Room = () => {
   const navigate = useNavigate();
-  const [rooms, setRooms]           = useState([]);
-  const [loading, setLoading]       = useState(true);
-  const [error, setError]           = useState(null);
+  const { isMobile } = useBreakpoint();
+  const [rooms, setRooms]       = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
 
+  // ── 篩選 / 排序 state ────────────────────────────────────────────
+  const [keyword,     setKeyword]     = useState("");
+  const [minCapacity, setMinCapacity] = useState(0);
+  const [sortBy,      setSortBy]      = useState("default");
+
+  // 一次性拉全部，前端處理篩選
   useEffect(() => {
     const fetchRooms = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res  = await fetch(`${API_URL}/api/rooms?page=${currentPage}&pageSize=${PAGE_SIZE}`);
+        const res  = await fetch(`${API_URL}/api/rooms?pageSize=100`);
         const json = await res.json();
         if (!json.success) throw new Error();
         setRooms(json.data);
-        setTotalPages(json.pagination.totalPages);
       } catch {
         setError("無法連線至伺服器，請確認後端是否啟動。");
       } finally {
@@ -36,14 +56,53 @@ const Room = () => {
       }
     };
     fetchRooms();
-  }, [currentPage]);
+  }, []);
+
+  // 篩選條件改變時回到第 1 頁
+  useEffect(() => { setCurrentPage(1); }, [keyword, minCapacity, sortBy]);
+
+  // ── 前端篩選 + 排序 ──────────────────────────────────────────────
+  const filteredRooms = useMemo(() => {
+    let result = [...rooms];
+
+    if (keyword.trim()) {
+      const kw = keyword.trim().toLowerCase();
+      result = result.filter(
+        (r) => r.title.toLowerCase().includes(kw) || r.desc.toLowerCase().includes(kw)
+      );
+    }
+
+    if (minCapacity > 0) {
+      result = result.filter((r) => (r.capacity || 0) >= minCapacity);
+    }
+
+    if (sortBy === "price_asc")      result.sort((a, b) => getMinPrice(a) - getMinPrice(b));
+    else if (sortBy === "price_desc") result.sort((a, b) => getMinPrice(b) - getMinPrice(a));
+    else if (sortBy === "cap_desc")   result.sort((a, b) => (b.capacity || 0) - (a.capacity || 0));
+
+    return result;
+  }, [rooms, keyword, minCapacity, sortBy]);
+
+  const totalPages = Math.ceil(filteredRooms.length / PAGE_SIZE) || 1;
+  const pagedRooms = filteredRooms.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
+
+  const isFiltered = keyword.trim() !== "" || minCapacity > 0 || sortBy !== "default";
+
+  const clearFilters = () => {
+    setKeyword("");
+    setMinCapacity(0);
+    setSortBy("default");
+  };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // ── 載入骨架 ────────────────────────────────────────────────────
+  // ── 骨架 ────────────────────────────────────────────────────────
   if (loading) return (
     <div style={{ maxWidth: 880, margin: "0 auto", padding: "32px 24px" }}>
       {[1, 2, 3].map((i) => (
@@ -72,8 +131,8 @@ const Room = () => {
   return (
     <div style={{ maxWidth: 880, margin: "0 auto", padding: "32px 24px 64px" }}>
 
-      {/* 標題 */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24 }}>
+      {/* ── 標題 ──────────────────────────────────────────────── */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
         <div style={{ width: 3, height: 18, background: "var(--accent)", borderRadius: 2 }} />
         <span style={{
           fontFamily: "var(--font-serif)", fontSize: 17, fontWeight: 500,
@@ -83,8 +142,99 @@ const Room = () => {
         </span>
       </div>
 
-      {/* 卡片列表 */}
-      {rooms.map((room, idx) => {
+      {/* ── 篩選工具列 ──────────────────────────────────────────── */}
+      <div style={{
+        display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap",
+        padding: isMobile ? "12px" : "14px 16px",
+        background: "var(--surface)",
+        border: "1px solid var(--border-light)",
+        borderRadius: "var(--r)",
+        marginBottom: 20,
+        boxShadow: "var(--shadow-sm)",
+      }}>
+        {/* 關鍵字搜尋 */}
+        <input
+          placeholder="搜尋空間名稱或說明…"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          style={{
+            ...selectStyle,
+            flex: "1 1 180px", minWidth: 140,
+            padding: "0 12px",
+          }}
+        />
+
+        {/* 容量篩選 */}
+        <select
+          value={minCapacity}
+          onChange={(e) => setMinCapacity(Number(e.target.value))}
+          style={{ ...selectStyle, flex: "0 0 120px" }}
+        >
+          <option value={0}>不限容量</option>
+          <option value={4}>4 人以上</option>
+          <option value={6}>6 人以上</option>
+          <option value={10}>10 人以上</option>
+        </select>
+
+        {/* 排序 */}
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          style={{ ...selectStyle, flex: "0 0 140px" }}
+        >
+          <option value="default">預設排列</option>
+          <option value="price_asc">價格：低 → 高</option>
+          <option value="price_desc">價格：高 → 低</option>
+          <option value="cap_desc">容量：大 → 小</option>
+        </select>
+
+        {/* 清除篩選 */}
+        {isFiltered && (
+          <button
+            onClick={clearFilters}
+            style={{
+              height: 34, padding: "0 14px", background: "transparent",
+              border: "1px solid var(--border)", borderRadius: 7,
+              fontSize: 12, color: "var(--text-muted)", cursor: "pointer",
+              fontFamily: "var(--font-sans)", transition: "all 0.15s",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--accent)"; e.currentTarget.style.color = "var(--accent)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text-muted)"; }}
+          >
+            清除篩選
+          </button>
+        )}
+
+        {/* 結果筆數 */}
+        <span style={{ fontSize: 12, color: "var(--text-muted)", marginLeft: "auto" }}>
+          {isFiltered
+            ? `篩選後 ${filteredRooms.length} / ${rooms.length} 筆`
+            : `共 ${rooms.length} 間場地`}
+        </span>
+      </div>
+
+      {/* ── 無結果 ────────────────────────────────────────────── */}
+      {pagedRooms.length === 0 && (
+        <div style={{
+          textAlign: "center", padding: "52px 0",
+          background: "var(--surface)", border: "1px solid var(--border-light)",
+          borderRadius: "var(--r)", color: "var(--text-muted)", fontSize: 13,
+        }}>
+          <div style={{ fontSize: 28, marginBottom: 10, opacity: 0.4 }}>🔍</div>
+          找不到符合條件的場地
+          <div style={{ marginTop: 12 }}>
+            <button
+              onClick={clearFilters}
+              style={{ fontSize: 12, color: "var(--accent)", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}
+            >
+              清除所有篩選
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── 卡片列表 ──────────────────────────────────────────── */}
+      {pagedRooms.map((room, idx) => {
         const { id, roomImg, title, desc, price, floor, area, capacity, facilities } = room;
         return (
           <div
@@ -93,27 +243,23 @@ const Room = () => {
               background: "var(--surface)",
               border: "1px solid var(--border-light)",
               borderRadius: "var(--r)",
-              padding: 20,
+              padding: isMobile ? 14 : 20,
               marginBottom: 16,
               display: "flex",
-              gap: 24,
+              flexDirection: isMobile ? "column" : "row",
+              gap: isMobile ? 12 : 24,
               transition: "border-color 0.15s, box-shadow 0.15s",
               animation: "fadeUp 0.4s ease both",
               animationDelay: `${idx * 0.07}s`,
             }}
-            onMouseEnter={e => {
-              e.currentTarget.style.borderColor = "var(--border)";
-              e.currentTarget.style.boxShadow   = "var(--shadow-md)";
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.borderColor = "var(--border-light)";
-              e.currentTarget.style.boxShadow   = "none";
-            }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.boxShadow = "var(--shadow-md)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border-light)"; e.currentTarget.style.boxShadow = "none"; }}
           >
             {/* 圖片 */}
             <div style={{
-              width: 200, height: 148, flexShrink: 0,
-              borderRadius: 8,
+              width: isMobile ? "100%" : 200,
+              height: isMobile ? 180 : 148,
+              flexShrink: 0, borderRadius: 8,
               backgroundImage: `url(${roomImg})`,
               backgroundSize: "cover", backgroundPosition: "center",
               backgroundColor: "var(--bg)",
@@ -143,10 +289,7 @@ const Room = () => {
               </div>
 
               {/* 說明 */}
-              <p style={{
-                fontSize: 12.5, color: "var(--text-secondary)",
-                lineHeight: 1.6, marginLeft: 14,
-              }}>
+              <p style={{ fontSize: 12.5, color: "var(--text-secondary)", lineHeight: 1.6, marginLeft: 14 }}>
                 {desc}
               </p>
 
@@ -206,15 +349,10 @@ const Room = () => {
         );
       })}
 
-      {/* 分頁 */}
+      {/* ── 分頁 ──────────────────────────────────────────────── */}
       {totalPages > 1 && (
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 6, marginTop: 24 }}>
-          <button
-            className="pg-btn"
-            disabled={currentPage === 1}
-            onClick={() => handlePageChange(currentPage - 1)}
-          >‹</button>
-
+          <button className="pg-btn" disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>‹</button>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
               key={page}
@@ -224,12 +362,7 @@ const Room = () => {
               {page}
             </button>
           ))}
-
-          <button
-            className="pg-btn"
-            disabled={currentPage === totalPages}
-            onClick={() => handlePageChange(currentPage + 1)}
-          >›</button>
+          <button className="pg-btn" disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)}>›</button>
         </div>
       )}
     </div>
